@@ -3,26 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First Coding Project</title>
+    <title>Bibo | High-End Web Developer</title>
     <style>
-        body {
-            background-color: #121212;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
+        /* Base Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        h1 { color: #ff0055; }
-        img { max-width: 300px; border-radius: 10px; margin-top: 20px; }
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #21262d;
+            background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%);
+        }
+        .hero-section h1 {
+            font-size: 2.8rem;
+            color: #f0f6fc;
+            margin-bottom: 10px;
+        }
+        .highlight {
+            color: #ff3385;
+            font-weight: bold;
+        }
+        .hero-section h2 {
+            font-size: 1.3rem;
+            color: #8b949e;
+            font-weight: normal;
+            margin-bottom: 15px;
+        }
+        .hero-section p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            color: #8b949e;
+        }
+
+        /* Portfolio Showcase Section */
+        .portfolio-section {
+            padding: 60px 20px;
+            text-align: center;
+            background-color: #0d1117;
+        }
+        .portfolio-section h3 {
+            font-size: 2rem;
+            color: #f0f6fc;
+            margin-bottom: 30px;
+        }
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .project-card {
+            background: #161b22;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+            text-align: left;
+            text-decoration: none;
+            display: block;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card h4 {
+            font-size: 1.4rem;
+            color: #f0f6fc;
+            margin-bottom: 10px;
+        }
+        .project-card p {
+            font-size: 0.95rem;
+            color: #8b949e;
+        }
+        /* The perfection hover effect */
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff3385;
+            box-shadow: 0 10px 20px rgba(255, 51, 133, 0.1);
+        }
+
+        /* Contact & Trust Section */
+        .contact-section {
+            padding: 60px 20px;
+            background-color: #161b22;
+            text-align: center;
+            border-top: 1px solid #21262d;
+        }
+        .contact-section h3 {
+            font-size: 2rem;
+            color: #f0f6fc;
+            margin-bottom: 15px;
+        }
+        .contact-section p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 25px auto;
+            color: #8b949e;
+        }
+        .contact-button {
+            background-color: #ff3385;
+            color: white;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .contact-button:hover {
+            background-color: #e02471;
+            transform: scale(1.05);
+        }
+
+        /* Responsive design for mobile screens */
+        @media (max-width: 600px) {
+            .hero-section h1 { font-size: 2rem; }
+            .hero-section h2 { font-size: 1.1rem; }
+            .portfolio-section h3, .contact-section h3 { font-size: 1.6rem; }
+        }
     </style>
 </head>
 <body>
 
-    <h1>Welcome to My Code-Built Website</h1>
-    <p>This entire site was built from scratch using Notepad++ and BIBO!</p>
-    
-    <!-- Make sure the image name matches your actual file exactly -->
-    <img src="images/your-pic-name.jpg" alt="Project Image">
+    <!-- 1. Hero Section -->
+    <div class="hero-section">
+        <h1>I Build High-End, <span class="highlight">Unstoppable</span> Websites.</h1>
+        <h2>Bibo | 15-Year-Old Full-Stack Developer | Lebanon</h2>
+        <p>Zero clutter. Just pure code and high performance that scales businesses.</p>
+    </div>
+
+    <!-- 2. Portfolio Showcase Section -->
+    <div class="portfolio-section">
+        <h3>My Live Projects</h3>
+        <div class="project-grid">
+            <!-- This card links directly to your first live deployment -->
+            <a href="https://bibo.vercel.app" target="_blank" class="project-card">
+                <h4>"BIBO" Core Deployment</h4>
+                <p>Built with lightweight, optimized HTML and CSS. Hosted permanently with global CDN infrastructure for instant loading.</p>
+            </a>
+            
+            <!-- You can add a second card concept here later by copying the <a> tag -->
+        </div>
+    </div>
+
+    <!-- 3. Trust & Call to Action Section -->
+    <div class="contact-section">
+        <h3>Start Your Project Today</h3>
+        <p>We'll map out your custom project, I'll build it to absolute perfection, and you can settle the balance instantly via Whish Money (Card Payment, Link, or Local Cash-In).</p>
+        <!-- Change '#' to your actual Instagram profile link later -->
+        <a href="#" target="_blank" class="contact-button">Message Me on Instagram</a>
+    </div>
 
 </body>
 </html>
