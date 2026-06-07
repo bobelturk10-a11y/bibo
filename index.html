@@ -3,284 +3,500 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Chat Generator</title>
+    <title>Fake Chat Tool - Studio Clone</title>
+    <!-- html2canvas library for downloading images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --panel-bg: #ffffff;
+            --text-main: #333333;
+            --border-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --whatsapp-green: #075E54;
+            --whatsapp-chat-bg: #efe7dd;
+            --whatsapp-chat-bg-dark: #0b141a;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .container {
+        header {
+            background: var(--panel-bg);
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--accent-color);
+        }
+
+        .workspace {
             display: flex;
-            background: white;
-            width: 900px;
-            max-width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        /* Left Control Panel */
-        .control-panel {
             flex: 1;
-            padding: 30px;
-            border-right: 1px solid #e0e0e0;
-            background: #fafafa;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 30px;
         }
 
-        .control-panel h2 {
-            margin-bottom: 20px;
-            color: #333;
+        /* Left Side: Configuration Columns (FakeDetail style layout) */
+        .config-side {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-color);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 8px;
+            color: #555;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .form-group label {
-            display: block;
-            margin-bottom: 5px;
+            font-size: 13px;
             font-weight: 600;
-            color: #555;
-            font-size: 14px;
+            color: #666;
         }
 
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 14px;
+            outline: none;
+            background: #fff;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-color);
         }
 
         .btn {
-            background-color: #25D366;
-            color: white;
+            padding: 12px;
             border: none;
-            padding: 10px 15px;
             border-radius: 6px;
-            cursor: pointer;
             font-weight: bold;
-            width: 100%;
-            transition: background 0.2s;
+            cursor: pointer;
+            font-size: 14px;
+            transition: opacity 0.2s;
         }
 
-        .btn:hover {
-            background-color: #1ebd58;
-        }
+        .btn-primary { background: var(--accent-color); color: white; }
+        .btn-success { background: #25D366; color: white; }
+        .btn:hover { opacity: 0.9; }
 
-        /* Right Preview Panel */
-        .preview-panel {
-            flex: 1;
+        /* Right Side: Mockup Frame Preview */
+        .preview-side {
+            flex: 0.8;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            background: #e5ddd5;
-            padding: 30px;
+            gap: 15px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
         }
 
-        /* Mock Phone Frame */
-        .phone-mockup {
-            width: 320px;
-            height: 580px;
-            background: #efe7dd; /* Classic WA background color */
-            border: 12px solid #333;
-            border-radius: 36px;
+        /* Phone Screen Shell Wrapper */
+        .phone-wrapper {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 12px solid #1a1a1a;
+        }
+
+        .phone-screen {
+            width: 360px;
+            height: 640px;
+            background: var(--whatsapp-chat-bg);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
+            user-select: none;
         }
 
-        /* WhatsApp Header Style */
-        .chat-header {
-            background: #075E54;
+        /* Phone UI Header / System Status Bar */
+        .system-status {
+            background: var(--whatsapp-green);
             color: white;
-            padding: 15px 10px;
+            padding: 6px 14px 2px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .system-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        /* App Specific Header bar */
+        .app-header {
+            background: var(--whatsapp-green);
+            color: white;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .avatar {
-            width: 36px;
-            height: 36px;
-            background: #ccc;
+        .profile-pic {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #555;
-            font-size: 14px;
+            background: #e0e0e0;
+            object-fit: cover;
+            display: block;
         }
 
-        .user-info .name {
-            font-weight: bold;
+        .header-meta {
+            flex: 1;
+        }
+
+        .header-meta .username {
+            font-weight: 600;
             font-size: 15px;
         }
 
-        .user-info .status {
+        .header-meta .status {
             font-size: 11px;
-            opacity: 0.8;
+            opacity: 0.85;
+            margin-top: 1px;
         }
 
-        /* Chat Area */
-        .chat-body {
+        /* Chat Workspace Canvas */
+        .chat-canvas {
             flex: 1;
             padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             overflow-y: auto;
         }
 
-        .message {
-            max-width: 75%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            position: relative;
-            line-height: 1.4;
-            word-wrap: break-word;
+        /* Empty state note inside mockup */
+        .empty-state-notice {
+            color: #777;
+            text-align: center;
+            font-size: 13px;
+            margin-top: 40%;
+            font-style: italic;
+            padding: 0 20px;
         }
 
-        /* Received Message (Left) */
-        .message.received {
-            background: white;
+        /* Message Box Mechanics */
+        .msg-bubble {
+            max-width: 75%;
+            padding: 8px 11px;
+            border-radius: 8px;
+            font-size: 14.5px;
+            position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-bubble .timestamp {
+            font-size: 10px;
+            color: #888;
+            align-self: flex-end;
+            margin-top: 4px;
+            margin-bottom: -2px;
+        }
+
+        .msg-bubble.received {
+            background: #ffffff;
             align-self: flex-start;
             border-top-left-radius: 0;
+            color: #000;
         }
 
-        /* Sent Message (Right) */
-        .message.sent {
-            background: #DCF8C6;
+        .msg-bubble.sent {
+            background: #dcf8c6;
             align-self: flex-end;
             border-top-right-radius: 0;
+            color: #000;
         }
 
-        /* Footer input mockup */
-        .chat-footer {
+        /* Phone App Footer */
+        .app-footer {
             background: #f0f0f0;
-            padding: 10px;
+            padding: 12px;
+            font-size: 13px;
+            color: #949494;
+            border-top: 1px solid #e0e0e0;
             display: flex;
-            align-items: center;
-            font-size: 12px;
-            color: #999;
-            border-top: 1px solid #ddd;
+            justify-content: space-between;
+        }
+
+        /* Dark Mode Mockup Variables override */
+        .phone-screen.dark-mode {
+            background: var(--whatsapp-chat-bg-dark);
+        }
+        .phone-screen.dark-mode .system-status,
+        .phone-screen.dark-mode .app-header {
+            background: #202c33;
+        }
+        .phone-screen.dark-mode .msg-bubble.received {
+            background: #202c33;
+            color: #e9edef;
+        }
+        .phone-screen.dark-mode .msg-bubble.sent {
+            background: #005c4b;
+            color: #e9edef;
+        }
+        .phone-screen.dark-mode .app-footer {
+            background: #111b21;
+            border-top: 1px solid #222c32;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="control-panel">
-        <h2>Chat Settings</h2>
+    <header>FakeDetail Mockup Builder Clone</header>
+
+    <div class="workspace">
         
-        <div class="form-group">
-            <label for="inputName">Person's Name</label>
-            <input type="text" id="inputName" value="John Doe" oninput="updateHeader()">
-        </div>
-
-        <div class="form-group">
-            <label for="inputStatus">Status (e.g., online, typing...)</label>
-            <input type="text" id="inputStatus" value="online" oninput="updateHeader()">
-        </div>
-
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-        
-        <h3>Add Message</h3>
-        <div class="form-group">
-            <label for="msgSender">Sender</label>
-            <select id="msgSender">
-                <option value="received">Person (Left)</option>
-                <option value="sent">You (Right)</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="msgText">Message Text</label>
-            <textarea id="msgText" rows="3" placeholder="Type a fake message..."></textarea>
-        </div>
-
-        <button class="btn" onclick="addMessage()">Add Message to Chat</button>
-    </div>
-
-    <div class="preview-panel">
-        <div class="phone-mockup">
+        <!-- LEFT: Control Configurations Panel -->
+        <div class="config-side">
             
-            <div class="chat-header">
-                <div class="avatar" id="previewAvatar">J</div>
-                <div class="user-info">
-                    <div class="name" id="previewName">John Doe</div>
-                    <div class="status" id="previewStatus">online</div>
+            <!-- Phone Environment Settings Card -->
+            <div class="card">
+                <h3>1. Device & Header Display Layout</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Target Client Name</label>
+                        <input type="text" id="cfgName" value="John Doe" oninput="liveUpdateLayout()">
+                    </div>
+                    <div class="form-group">
+                        <label>Status Subline text</label>
+                        <input type="text" id="cfgStatus" value="online" oninput="liveUpdateLayout()">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>System Time Clock</label>
+                        <input type="text" id="cfgTime" value="09:41" oninput="liveUpdateLayout()">
+                    </div>
+                    <div class="form-group">
+                        <label>Battery Percentage (%)</label>
+                        <input type="number" id="cfgBattery" value="85" min="1" max="100" oninput="liveUpdateLayout()">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Avatar Photo</label>
+                        <input type="file" id="cfgAvatar" accept="image/*" onchange="loadAvatarImage(event)">
+                    </div>
+                    <div class="form-group">
+                        <label>UI Theme Style Mode</label>
+                        <select id="cfgTheme" onchange="liveUpdateLayout()">
+                            <option value="light">Light Mode</option>
+                            <option value="dark">Dark Mode</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div class="chat-body" id="chatBody">
-                <div class="message received">Hey! How does this look?</div>
-                <div class="message sent">Looks just like a real chat!</div>
+            <!-- Chat Generation Stream Card -->
+            <div class="card">
+                <h3>2. Append Message Bubble</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Message Director Sender</label>
+                        <select id="msgDirection">
+                            <option value="received">Target Friend (Left Side)</option>
+                            <option value="sent">Me / Yourself (Right Side)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Bubble Log Time</label>
+                        <input type="text" id="msgTime" value="09:42">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Message Content Payload</label>
+                    <textarea id="msgBody" rows="3" placeholder="Write simulated conversation message layout text..."></textarea>
+                </div>
+                <button class="btn btn-success" onclick="pushMessageBubble()">Append Message to Stream</button>
             </div>
 
-            <div class="chat-footer">
-                Type a message...
-            </div>
-
+            <!-- Downloader Interface -->
+            <button class="btn btn-primary" style="padding: 16px;" onclick="downloadMockupCanvas()">Download Simulated Mockup Image PNG</button>
         </div>
+
+        <!-- RIGHT: Live Generated Mockup Frame Preview -->
+        <div class="preview-side">
+            <div class="phone-wrapper" id="captureTarget">
+                <div class="phone-screen" id="phoneScreen">
+                    
+                    <!-- Top Native OS Container Bar -->
+                    <div class="system-status">
+                        <span id="viewTime">09:41</span>
+                        <div class="system-icons">
+                            <span>📶</span>
+                            <span>🪫 <span id="viewBattery">85%</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Client Application Layout Header Top -->
+                    <div class="app-header">
+                        <img class="profile-pic" id="viewAvatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='38' height='38' viewBox='0 0 38 38'><rect width='38' height='38' fill='%23ccc'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%23666'>Pic</text></svg>">
+                        <div class="header-meta">
+                            <div class="username" id="viewName">John Doe</div>
+                            <div class="status" id="viewStatus">online</div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation dynamic render engine target -->
+                    <div class="chat-canvas" id="chatCanvas">
+                        <div class="empty-state-notice" id="emptyNotice">
+                            No messages added yet. Use the message engine panel on the left to add conversation streams.
+                        </div>
+                    </div>
+
+                    <!-- Bottom Application Control Mock Bar -->
+                    <div class="app-footer">
+                        <span>Type a message...</span>
+                        <span>📎 📷</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
-</div>
 
-<script>
-    // Live update Header Details
-    function updateHeader() {
-        const name = document.getElementById('inputName').value;
-        const status = document.getElementById('inputStatus').value;
-        
-        document.getElementById('previewName').innerText = name ? name : "Name";
-        document.getElementById('previewStatus').innerText = status;
-        
-        // Update avatar first letter
-        document.getElementById('previewAvatar').innerText = name ? name.charAt(0).toUpperCase() : "?";
-    }
-
-    // Add a new message dynamically
-    function addMessage() {
-        const sender = document.getElementById('msgSender').value;
-        const text = document.getElementById('msgText').value.trim();
-        const chatBody = document.getElementById('chatBody');
-
-        if (text === "") {
-            alert("Please enter some text first!");
-            return;
+    <script>
+        // Synchronize Layout text variables changes dynamically
+        function liveUpdateLayout() {
+            document.getElementById('viewName').innerText = document.getElementById('cfgName').value || 'Name';
+            document.getElementById('viewStatus').innerText = document.getElementById('cfgStatus').value || ' ';
+            document.getElementById('viewTime').innerText = document.getElementById('cfgTime').value;
+            document.getElementById('viewBattery').innerText = document.getElementById('cfgBattery').value + '%';
+            
+            // Theme settings processing selector 
+            const themeSelection = document.getElementById('cfgTheme').value;
+            const targetScreen = document.getElementById('phoneScreen');
+            if (themeSelection === 'dark') {
+                targetScreen.classList.add('dark-mode');
+            } else {
+                targetScreen.classList.remove('dark-mode');
+            }
         }
 
-        // Create new message div
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', sender);
-        messageDiv.innerText = text;
+        // Upload Profile Avatar Base64 conversion processing
+        function loadAvatarImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('viewAvatar');
+                output.src = reader.result;
+            }
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
 
-        // Append to chat body
-        chatBody.appendChild(messageDiv);
+        // Add message payload logic control mechanics 
+        function pushMessageBubble() {
+            const direction = document.getElementById('msgDirection').value;
+            const bodyText = document.getElementById('msgBody').value.trim();
+            const bubbleTime = document.getElementById('msgTime').value;
+            const canvas = document.getElementById('chatCanvas');
+            const notice = document.getElementById('emptyNotice');
 
-        // Scroll to the bottom of the chat
-        chatBody.scrollTop = chatBody.scrollHeight;
+            if (!bodyText) {
+                alert("Please enter message content text payload before generation processing.");
+                return;
+            }
 
-        // Clear textarea
-        document.getElementById('msgText').value = "";
-    }
-</script>
+            // Remove placeholder notice structural layout elements if active
+            if (notice) {
+                notice.remove();
+            }
 
+            // Build dynamic node elements wrapper
+            const msgNode = document.createElement('div');
+            msgNode.classList.add('msg-bubble', direction);
+
+            // Message text container content
+            const contentSpan = document.createElement('span');
+            contentSpan.innerText = bodyText;
+            msgNode.appendChild(contentSpan);
+
+            // Timeline component
+            const timeSpan = document.createElement('span');
+            timeSpan.classList.add('timestamp');
+            timeSpan.innerText = bubbleTime;
+            msgNode.appendChild(timeSpan);
+
+            // Append execution
+            canvas.appendChild(msgNode);
+            
+            // Clean up inputs processing structure element and automatically auto scroll
+            document.getElementById('msgBody').value = "";
+            canvas.scrollTop = canvas.scrollHeight;
+        }
+
+        // Screen Capture compilation engine block 
+        function downloadMockupCanvas() {
+            const containerFrame = document.getElementById('captureTarget');
+            
+            // Render call process settings
+            html2canvas(containerFrame, {
+                useCORS: true,
+                scale: 2 // High Resolution scaling asset execution
+            }).then(canvas => {
+                const linkElement = document.createElement('a');
+                linkElement.download = 'fakedetail-mockup-generator.png';
+                linkElement.href = canvas.toDataURL('image/png');
+                linkElement.click();
+            });
+        }
+    </script>
 </body>
 </html>
