@@ -3,420 +3,528 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glassmorphism Dynamic Design Studio</title>
+    <title>AeroGlass OS - Ultimate UI Engine</title>
     <style>
         :root {
+            --bg-darker: #020617;
             --bg-dark: #0f172a;
             --panel-bg: #1e293b;
-            --accent-neon: #38bdf8;
-            --accent-purple: #818cf8;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-slate: #334155;
+            --accent-cyan: #06b6d4;
+            --accent-indigo: #6366f1;
+            --text-white: #f8fafc;
+            --text-dim: #64748b;
+            --border-glow: #334155;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            min-height: 100vh;
+            background-color: var(--bg-darker);
+            color: var(--text-white);
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        header {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
+        /* SIDEBAR NAV (Left Column) */
+        .sidebar-nav {
+            width: 72px;
+            background: #030712;
+            border-right: 1px solid var(--border-glow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 0;
+            gap: 32px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .nav-item {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 20px;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        /* MAIN APP CONTAINER */
+        .app-layout {
+            display: flex;
+            flex: 1;
+            height: 100%;
+        }
+
+        /* CENTER PREVIEW CANVAS (Middle Column) */
+        .canvas-area {
+            flex: 1;
+            background: radial-gradient(circle at 50% 50%, var(--bg-dark), var(--bg-darker));
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-topbar {
             padding: 20px 40px;
-            border-bottom: 1px solid var(--border-slate);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            z-index: 10;
         }
 
-        header h1 {
-            font-size: 20px;
+        .canvas-topbar h2 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+        }
+
+        .preview-viewport {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Background Art Objects */
+        .mesh-orb {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            filter: blur(80px);
+            animation: orbFloat 20s infinite alternate ease-in-out;
+            opacity: 0.6;
+        }
+
+        .orb-magenta { width: 400px; height: 400px; background: #ec4899; top: 10%; left: 10%; }
+        .orb-cyan { width: 450px; height: 450px; background: #06b6d4; bottom: 10%; right: 10%; animation-delay: -5s; }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 50px) scale(1.2); }
+        }
+
+        /* Glass Preview Target Card */
+        .glass-element {
+            width: 460px;
+            min-height: 280px;
+            padding: 40px;
+            z-index: 5;
+            transition: box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .glass-element .badge {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: fit-content;
+            margin-bottom: 20px;
+        }
+
+        .glass-element h3 {
+            font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(to right, var(--accent-neon), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
             letter-spacing: -0.5px;
         }
 
-        .tag {
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            color: var(--accent-neon);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+        .glass-element p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
         }
 
-        .main-container {
+        /* CONTROL INSPECTOR PANEL (Right Column) */
+        .inspector-panel {
+            width: 400px;
+            background: #090d16;
+            border-left: 1px solid var(--border-glow);
             display: flex;
-            flex: 1;
-            padding: 40px;
-            gap: 40px;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
+            flex-direction: column;
+            height: 100%;
         }
 
-        /* Control Panel Styles */
-        .control-panel {
+        .inspector-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .inspector-header h1 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .inspector-scroll {
+            padding: 24px;
+            overflow-y: auto;
             flex: 1;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-slate);
-            border-radius: 24px;
-            padding: 30px;
             display: flex;
             flex-direction: column;
             gap: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
 
-        .panel-section h3 {
-            font-size: 14px;
+        .inspector-section h4 {
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            font-weight: 700;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            color: var(--text-dim);
             margin-bottom: 16px;
         }
 
-        .control-label-row {
+        /* Core Sliders & Inputs UI */
+        .slider-wrapper {
+            margin-bottom: 16px;
+        }
+
+        .slider-meta {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
+            font-size: 13px;
+            margin-bottom: 8px;
             font-weight: 500;
         }
 
-        .control-label-row span:last-child {
-            color: var(--accent-neon);
+        .slider-meta span:last-child {
+            color: var(--accent-cyan);
             font-family: monospace;
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 6px;
-            background: var(--border-slate);
-            border-radius: 10px;
+            height: 5px;
+            background: #1e293b;
+            border-radius: 4px;
             outline: none;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            background: var(--accent-neon);
+            width: 16px;
+            height: 16px;
+            background: var(--accent-cyan);
             border-radius: 50%;
             cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-cyan);
             transition: transform 0.1s;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+            transform: scale(1.25);
+        }
+
+        /* Color Matrix Row */
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #111827;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-glow);
         }
 
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
             cursor: pointer;
             background: transparent;
         }
 
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+
+        /* Output Terminal System */
+        .terminal-container {
+            border-top: 1px solid var(--border-glow);
+            background: #040711;
+            padding: 24px;
         }
 
-        input[type="color"]::-webkit-color-swatch {
-            border: 1px solid var(--border-slate);
-            border-radius: 8px;
-        }
-
-        .color-picker-row {
+        .tab-bar {
             display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Code Output Area */
-        .code-box {
-            background: #090d16;
-            border: 1px solid var(--border-slate);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative;
-            margin-top: auto;
-        }
-
-        .code-box pre {
-            font-family: 'Fira Code', monospace;
-            font-size: 13px;
-            color: #e2e8f0;
-            overflow-x: auto;
-            line-height: 1.6;
-        }
-
-        .btn-copy {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-slate);
-            color: var(--text-light);
-            padding: 6px 12px;
+            gap: 8px;
+            margin-bottom: 12px;
+            background: #0f172a;
+            padding: 4px;
             border-radius: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            padding: 6px;
             font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: var(--panel-bg);
+            color: var(--text-white);
+        }
+
+        .terminal-window {
+            background: #090d16;
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .terminal-window pre {
+            font-family: 'SFMono-Regular', Consolas, monospace;
+            font-size: 12px;
+            color: #cbd5e1;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-glow);
+            color: var(--accent-cyan);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .btn-copy:hover {
-            background: var(--accent-neon);
-            color: var(--bg-dark);
-            border-color: var(--accent-neon);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-        }
-
-        /* Interactive Preview Canvas */
-        .preview-pane {
-            flex: 1.2;
-            background: #0b0f19;
-            border: 1px solid var(--border-slate);
-            border-radius: 24px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
-            min-height: 500px;
-        }
-
-        /* Moving abstract geometric objects behind glass to emphasize blur blur effect */
-        .bg-shape {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(0px);
-            animation: float 12s infinite alternate ease-in-out;
-        }
-
-        .shape-1 {
-            width: 250px;
-            height: 250px;
-            background: linear-gradient(45deg, #ff007f, #7928ca);
-            top: 20%;
-            left: 15%;
-        }
-
-        .shape-2 {
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(45deg, #00dfd8, #007cf0);
-            bottom: 15%;
-            right: 10%;
-            animation-delay: -4s;
-        }
-
-        .shape-3 {
-            width: 18px;
-            height: 180px;
-            background: linear-gradient(45deg, #feb47b, #ff7e5f);
-            top: 50%;
-            right: 45%;
-            animation-delay: -8s;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg) scale(1); }
-            100% { transform: translateY(40px) rotate(180deg) scale(1.1); }
-        }
-
-        /* The Live Glass Plate Card */
-        .glass-preview-card {
-            width: 380px;
-            height: 240px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 40px;
-            transition: all 0.05s ease;
-        }
-
-        .glass-preview-card h2 {
-            font-size: 24px;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .glass-preview-card p {
-            font-size: 14px;
-            color: rgba(255,255,255,0.7);
-            line-height: 1.5;
+        .copy-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-darker);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>GlassUI Studio</h1>
-        <div class="tag">CSS Engine Active</div>
-    </header>
+    <!-- 1. LEFT UTILITY SYSTEM RAIL -->
+    <nav class="sidebar-nav">
+        <div class="logo-icon">A</div>
+        <div class="nav-item active">🎨</div>
+        <div class="nav-item">⚙️</div>
+        <div class="nav-item">👁️</div>
+    </nav>
 
-    <div class="main-container">
+    <div class="app-layout">
         
-        <!-- LEFT PANEL: Dynamic Control Nodes -->
-        <div class="control-panel">
-            <div class="panel-section">
-                <h3>Glass Modification Metrics</h3>
-                
-                <div class="control-group">
-                    <div class="control-label-row">
-                        <label>Blur Intensity</label>
-                        <span id="valBlur">12px</span>
+        <!-- 2. CENTER VISUALIZATION MONITOR -->
+        <main class="canvas-area">
+            <div class="canvas-topbar">
+                <h2>WORKSPACE // PREVIEW_RENDERER</h2>
+                <div style="font-size: 12px; color: var(--accent-cyan); font-family: monospace;">● LIVE ENGINE SPEED: 60FPS</div>
+            </div>
+
+            <div class="preview-viewport">
+                <!-- Moving Backdrop Nodes -->
+                <div class="mesh-orb orb-magenta"></div>
+                <div class="mesh-orb orb-cyan"></div>
+
+                <!-- Live Structural Glass Node Target -->
+                <div class="glass-element" id="glassNode">
+                    <div class="badge" id="cardBadge">System Node</div>
+                    <h3 id="cardHeading">AeroGlass Engine</h3>
+                    <p>Observe the frosted distortion grid layer interacting fluidly with ambient neon mesh configurations background properties.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- 3. RIGHT FIELD PARAMETER INSPECTOR -->
+        <aside class="inspector-panel">
+            <div class="inspector-header">
+                <h1>Layout Properties</h1>
+            </div>
+
+            <div class="inspector-scroll">
+                <!-- Section A: Matrix Variables -->
+                <div class="inspector-section">
+                    <h4>Glass Distortion Engine</h4>
+                    
+                    <div class="slider-wrapper">
+                        <div class="slider-meta">
+                            <label>Backdrop Blur</label>
+                            <span id="txtBlur">16px</span>
+                        </div>
+                        <input type="range" id="valBlur" min="0" max="40" value="16" oninput="compileAeroStyles()">
                     </div>
-                    <input type="range" id="inputBlur" min="0" max="25" value="12" oninput="generateGlassCSS()">
+
+                    <div class="slider-wrapper">
+                        <div class="slider-meta">
+                            <label>Opacity Density</label>
+                            <span id="txtOpacity">0.12</span>
+                        </div>
+                        <input type="range" id="valOpacity" min="0" max="100" value="12" oninput="compileAeroStyles()">
+                    </div>
+
+                    <div class="slider-wrapper">
+                        <div class="slider-meta">
+                            <label>Border Radius</label>
+                            <span id="txtRadius">24px</span>
+                        </div>
+                        <input type="range" id="valRadius" min="0" max="60" value="24" oninput="compileAeroStyles()">
+                    </div>
                 </div>
 
-                <div class="control-group">
-                    <div class="control-label-row">
-                        <label>Transparency Opacity</label>
-                        <span id="valOpacity">0.15</span>
+                <!-- Section B: Shading Specs -->
+                <div class="inspector-section">
+                    <h4>Shading & Filters</h4>
+                    
+                    <div class="slider-wrapper">
+                        <div class="slider-meta">
+                            <label>Shadow Spread Depth</label>
+                            <span id="txtShadow">30px</span>
+                        </div>
+                        <input type="range" id="valShadow" min="0" max="100" value="30" oninput="compileAeroStyles()">
                     </div>
-                    <input type="range" id="inputOpacity" min="0" max="100" value="15" oninput="generateGlassCSS()">
-                </div>
 
-                <div class="control-group">
-                    <div class="control-label-row">
-                        <label>Border Line Radius</label>
-                        <span id="valRadius">24px</span>
-                    </div>
-                    <input type="range" id="inputRadius" min="0" max="50" value="24" oninput="generateGlassCSS()">
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label-row">
-                        <label>Glass Tint Color</label>
-                    </div>
-                    <div class="color-picker-row">
-                        <input type="color" id="inputColor" value="#ffffff" oninput="generateGlassCSS()">
-                        <span style="font-size: 14px; color: var(--text-muted)">Adjust base highlight plate hue</span>
+                    <div class="control-group">
+                        <div class="slider-meta"><label>Solid Tint Layer</label></div>
+                        <div class="color-row">
+                            <input type="color" id="valColor" value="#ffffff" oninput="compileAeroStyles()">
+                            <span style="font-size: 13px; color: var(--text-dim)">Adjust hex core alpha color</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CSS Code Realtime Output Terminal Block -->
-            <div class="code-box">
-                <button class="btn-copy" onclick="copyCodeToClipboard()">Copy CSS</button>
-                <pre><code id="cssCodeOutput">Loading styles...</code></pre>
-            </div>
-        </div>
+            <!-- 4. BOTTOM INTERFACE EXPORT CODE TERMINAL -->
+            <div class="terminal-container">
+                <div class="tab-bar">
+                    <button class="tab-btn active" onclick="switchTab('css')">Standard CSS</button>
+                    <button class="tab-btn" onclick="switchTab('tailwind')">Tailwind Classes</button>
+                </div>
 
-        <!-- RIGHT PANEL: Fluid Visual Canvas -->
-        <div class="preview-pane">
-            <!-- Animated background targets to visually showcase back-plate blurring -->
-            <div class="bg-shape shape-1"></div>
-            <div class="bg-shape shape-2"></div>
-            <div class="bg-shape shape-3"></div>
-
-            <!-- Realtime rendering interface object -->
-            <div class="glass-preview-card" id="glassCard">
-                <h2>Interactive Preview</h2>
-                <p>Move sliders inside the studio panel grid. Watch how background blur metrics interact dynamically with floating geometric matrix objects.</p>
+                <div class="terminal-window">
+                    <button class="copy-btn" onclick="copyConsoleCode()">Copy Code</button>
+                    <pre><code id="codeOutput">Processing layout rules...</code></pre>
+                </div>
             </div>
-        </div>
+        </aside>
 
     </div>
 
     <script>
-        // Convert hex value layout directly to raw rgba conversion strings
-        function hexToRgb(hex) {
+        let currentMode = 'css';
+
+        // Hex parsing to standard RGB output 
+        function hexToRgbMatrix(hex) {
             let c;
             if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
                 c= hex.substring(1).split('');
-                if(c.length== 3){
-                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-                }
+                if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
                 c= '0x' + c.join('');
                 return [(c>>16)&255, (c>>8)&255, c&255].join(', ');
             }
             return '255, 255, 255';
         }
 
-        // Live styling controller calculation compilation block
-        function generateGlassCSS() {
-            const blur = document.getElementById('inputBlur').value;
-            const opacity = document.getElementById('inputOpacity').value / 100;
-            const radius = document.getElementById('inputRadius').value;
-            const hexColor = document.getElementById('inputColor').value;
+        // Tab Switching Engine
+        function switchTab(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            compileAeroStyles();
+        }
+
+        // Live Compiler Mechanics
+        function compileAeroStyles() {
+            const blur = document.getElementById('valBlur').value;
+            const opacity = document.getElementById('valOpacity').value / 100;
+            const radius = document.getElementById('valRadius').value;
+            const shadow = document.getElementById('valShadow').value;
+            const hex = document.getElementById('valColor').value;
             
-            const rgbColor = hexToRgb(hexColor);
+            const rgb = hexToRgbMatrix(hex);
 
-            // Update user interface metric badges
-            document.getElementById('valBlur').innerText = blur + "px";
-            document.getElementById('valOpacity').innerText = opacity;
-            document.getElementById('valRadius').innerText = radius + "px";
+            // Text tag metrics synchronization
+            document.getElementById('txtBlur').innerText = blur + "px";
+            document.getElementById('txtOpacity').innerText = opacity;
+            document.getElementById('txtRadius').innerText = radius + "px";
+            document.getElementById('txtShadow').innerText = shadow + "px";
 
-            // Compile style rules matching standard glassmorphism web criteria
-            const cardTarget = document.getElementById('glassCard');
-            
-            cardTarget.style.background = `rgba(${rgbColor}, ${opacity})`;
-            cardTarget.style.backdropFilter = `blur(${blur}px)`;
-            cardTarget.style.webkitBackdropFilter = `blur(${blur}px)`;
-            cardTarget.style.borderRadius = `${radius}px`;
-            cardTarget.style.border = `1px solid rgba(${rgbColor}, ${opacity + 0.15})`;
+            // Apply direct design rules onto active canvas node
+            const glassNode = document.getElementById('glassNode');
+            glassNode.style.background = `rgba(${rgb}, ${opacity})`;
+            glassNode.style.backdropFilter = `blur(${blur}px)`;
+            glassNode.style.webkitBackdropFilter = `blur(${blur}px)`;
+            glassNode.style.borderRadius = `${radius}px`;
+            glassNode.style.border = `1px solid rgba(${rgb}, ${(opacity + 0.12).toFixed(2)})`;
+            glassNode.style.boxShadow = `0 4px ${shadow}px 0 rgba(0, 0, 0, 0.37)`;
 
-            // Generate clean code text block
-            const generatedStylesText = 
-`background: rgba(${rgbColor}, ${opacity});\n` +
+            // Render Output Text generation
+            const outputBox = document.getElementById('codeOutput');
+            if (currentMode === 'css') {
+                outputBox.innerText = 
+`background: rgba(${rgb}, ${opacity});\n` +
 `backdrop-filter: blur(${blur}px);\n` +
 `-webkit-backdrop-filter: blur(${blur}px);\n` +
 `border-radius: ${radius}px;\n` +
-`border: 1px solid rgba(${rgbColor}, ${(opacity + 0.15).toFixed(2)});`;
-
-            document.getElementById('cssCodeOutput').innerText = generatedStylesText;
+`border: 1px solid rgba(${rgb}, ${(opacity + 0.12).toFixed(2)});\n` +
+`box-shadow: 0 4px ${shadow}px 0 rgba(0, 0, 0, 0.37);`;
+            } else {
+                // Approximate Tailwind configuration conversion
+                outputBox.innerText = `class="bg-white/[${opacity}] backdrop-blur-[${blur}px] rounded-[${radius}px] border border-white/[${(opacity + 0.12).toFixed(2)}] shadow-2xl"`;
+            }
         }
 
-        // Clip data logic 
-        function copyCodeToClipboard() {
-            const textToCopy = document.getElementById('cssCodeOutput').innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const copyBtn = document.querySelector('.btn-copy');
-                copyBtn.innerText = "Copied! ✓";
-                setTimeout(() => {
-                    copyBtn.innerText = "Copy CSS";
-                }, 2000);
+        // Copy mechanism
+        function copyConsoleCode() {
+            const text = document.getElementById('codeOutput').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.innerText = "Copied!";
+                setTimeout(() => { btn.innerText = "Copy Code"; }, 1500);
             });
         }
 
-        // Run initialization on load window state matrix parameters
-        window.onload = generateGlassCSS;
+        window.onload = compileAeroStyles;
     </script>
 </body>
 </html>
