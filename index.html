@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeroGlass OS - Ultimate UI Engine</title>
+    <title>AeroGlass Studio - Cross-Platform UI Engine</title>
     <style>
         :root {
             --bg-darker: #020617;
@@ -28,10 +28,11 @@
             color: var(--text-white);
             height: 100vh;
             display: flex;
+            flex-direction: row;
             overflow: hidden;
         }
 
-        /* SIDEBAR NAV (Left Column) */
+        /* 1. LEFT SIDEBAR NAVIGATION (Responsive to Bottom Bar on Mobile) */
         .sidebar-nav {
             width: 72px;
             background: #030712;
@@ -41,6 +42,8 @@
             align-items: center;
             padding: 24px 0;
             gap: 32px;
+            z-index: 100;
+            flex-shrink: 0;
         }
 
         .logo-icon {
@@ -56,32 +59,65 @@
             box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
         }
 
-        .nav-item {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+        .nav-items-container {
             display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .nav-item {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             color: var(--text-dim);
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 20px;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            border: 1px solid transparent;
+            gap: 2px;
+        }
+
+        .nav-item span {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: none; /* Desktop hides names for clean minimalist look */
         }
 
         .nav-item.active, .nav-item:hover {
             color: var(--accent-cyan);
-            background: rgba(6, 182, 212, 0.1);
+            background: rgba(6, 182, 212, 0.08);
+            border-color: rgba(6, 182, 212, 0.2);
         }
 
-        /* MAIN APP CONTAINER */
+        /* 2. MAIN APP STRUCTURAL WORKSPACE */
         .app-layout {
             display: flex;
             flex: 1;
             height: 100%;
+            overflow: hidden;
+            position: relative;
         }
 
-        /* CENTER PREVIEW CANVAS (Middle Column) */
+        /* Viewport switching containers */
+        .workspace-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .workspace-panel.active {
+            display: flex;
+        }
+
+        /* MIDDLE PREVIEW CANVAS COLUMN */
         .canvas-area {
             flex: 1;
             background: radial-gradient(circle at 50% 50%, var(--bg-dark), var(--bg-darker));
@@ -89,10 +125,11 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            height: 100%;
         }
 
         .canvas-topbar {
-            padding: 20px 40px;
+            padding: 20px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -101,9 +138,9 @@
         }
 
         .canvas-topbar h2 {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
             color: #94a3b8;
         }
 
@@ -113,80 +150,70 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            padding: 20px;
         }
 
-        /* Background Art Objects */
+        /* Mesh Background Blur Objects */
         .mesh-orb {
             position: absolute;
             border-radius: 50%;
             mix-blend-mode: screen;
-            filter: blur(80px);
-            animation: orbFloat 20s infinite alternate ease-in-out;
-            opacity: 0.6;
+            filter: blur(60px);
+            animation: orbFloat 16s infinite alternate ease-in-out;
+            opacity: 0.5;
+            pointer-events: none;
         }
-
-        .orb-magenta { width: 400px; height: 400px; background: #ec4899; top: 10%; left: 10%; }
-        .orb-cyan { width: 450px; height: 450px; background: #06b6d4; bottom: 10%; right: 10%; animation-delay: -5s; }
+        .orb-magenta { width: 300px; height: 300px; background: #ec4899; top: 15%; left: 10%; }
+        .orb-cyan { width: 350px; height: 350px; background: #06b6d4; bottom: 15%; right: 10%; animation-delay: -4s; }
 
         @keyframes orbFloat {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(80px, 50px) scale(1.2); }
+            100% { transform: translate(50px, 30px) scale(1.15); }
         }
 
-        /* Glass Preview Target Card */
+        /* The Live Glass Plate Element (Responsive scaling) */
         .glass-element {
-            width: 460px;
-            min-height: 280px;
-            padding: 40px;
+            width: 100%;
+            max-width: 440px;
+            min-height: 240px;
+            padding: 30px;
             z-index: 5;
-            transition: box-shadow 0.3s ease;
-            position: relative;
-        }
-
-        .glass-element .badge {
-            background: rgba(255,255,255,0.1);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            width: fit-content;
-            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
         }
 
         .glass-element h3 {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: -0.5px;
         }
 
         .glass-element p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.75);
-            line-height: 1.6;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
         }
 
-        /* CONTROL INSPECTOR PANEL (Right Column) */
+        /* RIGHT PARAMETER SLIDERS COLUMN */
         .inspector-panel {
-            width: 400px;
+            width: 380px;
             background: #090d16;
             border-left: 1px solid var(--border-glow);
             display: flex;
             flex-direction: column;
             height: 100%;
+            flex-shrink: 0;
         }
 
         .inspector-header {
-            padding: 24px;
+            padding: 20px 24px;
             border-bottom: 1px solid var(--border-glow);
         }
 
         .inspector-header h1 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
-            letter-spacing: 0.5px;
         }
 
         .inspector-scroll {
@@ -203,36 +230,22 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-dim);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
-        /* Core Sliders & Inputs UI */
-        .slider-wrapper {
-            margin-bottom: 16px;
-        }
-
-        .slider-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .slider-meta span:last-child {
-            color: var(--accent-cyan);
-            font-family: monospace;
-        }
+        /* Sliders */
+        .slider-wrapper { margin-bottom: 16px; }
+        .slider-meta { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+        .slider-meta span:last-child { color: var(--accent-cyan); font-family: monospace; font-weight: bold; }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 5px;
+            height: 6px;
             background: #1e293b;
             border-radius: 4px;
             outline: none;
         }
-
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 16px;
@@ -240,15 +253,8 @@
             background: var(--accent-cyan);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 10px var(--accent-cyan);
-            transition: transform 0.1s;
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.25);
-        }
-
-        /* Color Matrix Row */
         .color-row {
             display: flex;
             align-items: center;
@@ -258,30 +264,46 @@
             border-radius: 10px;
             border: 1px solid var(--border-glow);
         }
-
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            cursor: pointer;
-            background: transparent;
-        }
-
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"] { -webkit-appearance: none; border: none; width: 32px; height: 32px; cursor: pointer; background: transparent; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
 
-        /* Output Terminal System */
+        /* THEME PRESET GRID SYSTEM */
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 24px;
+            overflow-y: auto;
+            width: 100%;
+        }
+        .preset-card {
+            background: #111827;
+            border: 1px solid var(--border-glow);
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .preset-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+        .preset-preview {
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* OUTPUT TERMINAL CONTAINER */
         .terminal-container {
             border-top: 1px solid var(--border-glow);
             background: #040711;
-            padding: 24px;
+            padding: 20px;
         }
 
         .tab-bar {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 12px;
             background: #0f172a;
             padding: 4px;
@@ -294,167 +316,282 @@
             border: none;
             color: var(--text-dim);
             padding: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
         }
 
-        .tab-btn.active {
-            background: var(--panel-bg);
-            color: var(--text-white);
-        }
+        .tab-btn.active { background: var(--panel-bg); color: var(--text-white); }
 
         .terminal-window {
             background: #090d16;
             border: 1px solid var(--border-glow);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 10px;
+            padding: 14px;
             position: relative;
         }
 
         .terminal-window pre {
-            font-family: 'SFMono-Regular', Consolas, monospace;
-            font-size: 12px;
+            font-family: monospace;
+            font-size: 11px;
             color: #cbd5e1;
             overflow-x: auto;
-            line-height: 1.5;
+            max-height: 120px;
         }
 
         .copy-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.04);
+            top: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.05);
             border: 1px solid var(--border-glow);
             color: var(--accent-cyan);
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 10px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .copy-btn:hover {
-            background: var(--accent-cyan);
-            color: var(--bg-darker);
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+        /* ==========================================================================
+           Media Queries for Total Device Responsiveness (Laptops, Tablets, & Phones)
+           ========================================================================== */
+        
+        /* 📱 TARGET: Tablets, iPads, and Small Laptops (Under 1024px width) */
+        @media (max-width: 1024px) {
+            .workspace-panel.active {
+                flex-direction: column;
+            }
+            .canvas-area {
+                height: 55%;
+            }
+            .inspector-panel {
+                width: 100%;
+                height: 45%;
+                border-left: none;
+                border-top: 1px solid var(--border-glow);
+            }
+            .terminal-container {
+                padding: 12px 24px;
+            }
+        }
+
+        /* 📱 TARGET: Mobile Phones (Under 640px width) */
+        @media (max-width: 640px) {
+            body {
+                flex-direction: column-reverse; /* Navigation moves smoothly to bottom thumb touch area */
+            }
+            .sidebar-nav {
+                width: 100%;
+                height: 64px;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 0;
+                border-right: none;
+                border-top: 1px solid var(--border-glow);
+            }
+            .logo-icon {
+                display: none; /* Hide logo on phone view to save space */
+            }
+            .nav-items-container {
+                flex-direction: row;
+                justify-content: space-around;
+                height: 100%;
+                gap: 0;
+            }
+            .nav-item {
+                width: 25%;
+                height: 100%;
+                border-radius: 0;
+                border: none;
+            }
+            .nav-item span {
+                display: block; /* Show menu labels clearly on mobile layouts */
+            }
+            .canvas-area {
+                height: 50%;
+            }
+            .canvas-topbar {
+                padding: 12px 16px;
+            }
+            .glass-element h3 {
+                font-size: 20px;
+            }
+            .inspector-panel {
+                height: 50%;
+            }
+            .preset-grid {
+                grid-template-columns: 1fr; /* 1 Column for themes on vertical phone viewports */
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. LEFT UTILITY SYSTEM RAIL -->
+    <!-- 1. RESPONSIVE NAVIGATION CONTROL SYSTEM -->
     <nav class="sidebar-nav">
         <div class="logo-icon">A</div>
-        <div class="nav-item active">🎨</div>
-        <div class="nav-item">⚙️</div>
-        <div class="nav-item">👁️</div>
+        <div class="nav-items-container">
+            <div class="nav-item active" onclick="switchWorkspace('designer', this)">
+                <div>🎨</div><span>Studio</span>
+            </div>
+            <div class="nav-item" onclick="switchWorkspace('themes', this)">
+                <div>✨</div><span>Themes</span>
+            </div>
+            <div class="nav-item" onclick="switchWorkspace('metrics', this)">
+                <div>📊</div><span>Specs</span>
+            </div>
+        </div>
     </nav>
 
+    <!-- 2. STRUCTURAL WORKSPACE VIEW PORTS -->
     <div class="app-layout">
         
-        <!-- 2. CENTER VISUALIZATION MONITOR -->
-        <main class="canvas-area">
-            <div class="canvas-topbar">
-                <h2>WORKSPACE // PREVIEW_RENDERER</h2>
-                <div style="font-size: 12px; color: var(--accent-cyan); font-family: monospace;">● LIVE ENGINE SPEED: 60FPS</div>
-            </div>
-
-            <div class="preview-viewport">
-                <!-- Moving Backdrop Nodes -->
-                <div class="mesh-orb orb-magenta"></div>
-                <div class="mesh-orb orb-cyan"></div>
-
-                <!-- Live Structural Glass Node Target -->
-                <div class="glass-element" id="glassNode">
-                    <div class="badge" id="cardBadge">System Node</div>
-                    <h3 id="cardHeading">AeroGlass Engine</h3>
-                    <p>Observe the frosted distortion grid layer interacting fluidly with ambient neon mesh configurations background properties.</p>
+        <!-- WORKSPACE 1: THE CORE DESIGN STUDIO (Canvas + Sliders) -->
+        <div id="view-designer" class="workspace-panel active">
+            <main class="canvas-area">
+                <div class="canvas-topbar">
+                    <h2>ENGINE // CANVAS_VIEWPORT</h2>
+                    <div style="font-size: 11px; color: var(--accent-cyan); font-family: monospace;">● ACTIVE</div>
                 </div>
-            </div>
-        </main>
-
-        <!-- 3. RIGHT FIELD PARAMETER INSPECTOR -->
-        <aside class="inspector-panel">
-            <div class="inspector-header">
-                <h1>Layout Properties</h1>
-            </div>
-
-            <div class="inspector-scroll">
-                <!-- Section A: Matrix Variables -->
-                <div class="inspector-section">
-                    <h4>Glass Distortion Engine</h4>
-                    
-                    <div class="slider-wrapper">
-                        <div class="slider-meta">
-                            <label>Backdrop Blur</label>
-                            <span id="txtBlur">16px</span>
-                        </div>
-                        <input type="range" id="valBlur" min="0" max="40" value="16" oninput="compileAeroStyles()">
-                    </div>
-
-                    <div class="slider-wrapper">
-                        <div class="slider-meta">
-                            <label>Opacity Density</label>
-                            <span id="txtOpacity">0.12</span>
-                        </div>
-                        <input type="range" id="valOpacity" min="0" max="100" value="12" oninput="compileAeroStyles()">
-                    </div>
-
-                    <div class="slider-wrapper">
-                        <div class="slider-meta">
-                            <label>Border Radius</label>
-                            <span id="txtRadius">24px</span>
-                        </div>
-                        <input type="range" id="valRadius" min="0" max="60" value="24" oninput="compileAeroStyles()">
+                <div class="preview-viewport">
+                    <div class="mesh-orb orb-magenta"></div>
+                    <div class="mesh-orb orb-cyan"></div>
+                    <div class="glass-element" id="glassCardTarget">
+                        <h3 id="glassHeading">AeroGlass Core</h3>
+                        <p id="glassParagraph">Move sliders inside the control console layer. Watch background blurs render dynamically at ultra-low latency across all devices.</p>
                     </div>
                 </div>
+            </main>
 
-                <!-- Section B: Shading Specs -->
-                <div class="inspector-section">
-                    <h4>Shading & Filters</h4>
-                    
-                    <div class="slider-wrapper">
-                        <div class="slider-meta">
-                            <label>Shadow Spread Depth</label>
-                            <span id="txtShadow">30px</span>
+            <aside class="inspector-panel">
+                <div class="inspector-header"><h1>Studio Parameters</h1></div>
+                <div class="inspector-scroll">
+                    <div class="inspector-section">
+                        <h4>Glass Modifiers</h4>
+                        <div class="slider-wrapper">
+                            <div class="slider-meta"><label>Backdrop Blur</label><span id="lblBlur">16px</span></div>
+                            <input type="range" id="valBlur" min="0" max="40" value="16" oninput="runLiveCompiler()">
                         </div>
-                        <input type="range" id="valShadow" min="0" max="100" value="30" oninput="compileAeroStyles()">
+                        <div class="slider-wrapper">
+                            <div class="slider-meta"><label>Glass Opacity</label><span id="lblOpacity">0.12</span></div>
+                            <input type="range" id="valOpacity" min="0" max="100" value="12" oninput="runLiveCompiler()">
+                        </div>
+                        <div class="slider-wrapper">
+                            <div class="slider-meta"><label>Corner Radius</label><span id="lblRadius">24px</span></div>
+                            <input type="range" id="valRadius" min="0" max="60" value="24" oninput="runLiveCompiler()">
+                        </div>
                     </div>
-
-                    <div class="control-group">
-                        <div class="slider-meta"><label>Solid Tint Layer</label></div>
-                        <div class="color-row">
-                            <input type="color" id="valColor" value="#ffffff" oninput="compileAeroStyles()">
-                            <span style="font-size: 13px; color: var(--text-dim)">Adjust hex core alpha color</span>
+                    <div class="inspector-section">
+                        <h4>Shadow Profile</h4>
+                        <div class="slider-wrapper">
+                            <div class="slider-meta"><label>Glow Spread</label><span id="lblShadow">30px</span></div>
+                            <input type="range" id="valShadow" min="0" max="100" value="30" oninput="runLiveCompiler()">
+                        </div>
+                        <div class="slider-wrapper">
+                            <div class="slider-meta"><label>Base Tint Color</label></div>
+                            <div class="color-row">
+                                <input type="color" id="valColor" value="#ffffff" oninput="runLiveCompiler()">
+                                <span style="font-size: 12px; color: var(--text-dim)">Adjust base highlight plate hue</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 4. BOTTOM INTERFACE EXPORT CODE TERMINAL -->
-            <div class="terminal-container">
-                <div class="tab-bar">
-                    <button class="tab-btn active" onclick="switchTab('css')">Standard CSS</button>
-                    <button class="tab-btn" onclick="switchTab('tailwind')">Tailwind Classes</button>
+                <div class="terminal-container">
+                    <div class="tab-bar">
+                        <button class="tab-btn active" onclick="setSyntaxMode('css', this)">CSS Styles</button>
+                        <button class="tab-btn" onclick="setSyntaxMode('tailwind', this)">Tailwind</button>
+                    </div>
+                    <div class="terminal-window">
+                        <button class="copy-btn" onclick="copyCompiledCode()">Copy Code</button>
+                        <pre><code id="codeOutput">Processing...</code></pre>
+                    </div>
                 </div>
+            </aside>
+        </div>
 
-                <div class="terminal-window">
-                    <button class="copy-btn" onclick="copyConsoleCode()">Copy Code</button>
-                    <pre><code id="codeOutput">Processing layout rules...</code></pre>
+        <!-- WORKSPACE 2: THE THEME ENGINE SYSTEM -->
+        <div id="view-themes" class="workspace-panel">
+            <div class="preset-grid">
+                <div class="preset-card" onclick="applyQuickTheme(25, 8, '#ffffff', 40, 'Ice Platinum', 'Perfect crystal frost highlight layout settings.')">
+                    <div class="preset-preview" style="background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05)); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3);"></div>
+                    <h5>Ice Platinum</h5>
+                </div>
+                <div class="preset-card" onclick="applyQuickTheme(12, 25, '#06b6d4', 20, 'Neon Cyber', 'Deep futuristic electric glowing backdrop parameters.')">
+                    <div class="preset-preview" style="background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(6,182,212,0.05)); backdrop-filter: blur(10px); border: 1px solid rgba(6,182,212,0.4);"></div>
+                    <h5>Neon Cyber</h5>
+                </div>
+                <div class="preset-card" onclick="applyQuickTheme(35, 18, '#818cf8', 50, 'Amethyst Dusk', 'Rich deep luxurious purplish frosted styling.')">
+                    <div class="preset-preview" style="background: linear-gradient(135deg, rgba(129,140,248,0.2), rgba(129,140,248,0.05)); backdrop-filter: blur(30px); border: 1px solid rgba(129,140,248,0.3);"></div>
+                    <h5>Amethyst Dusk</h5>
+                </div>
+                <div class="preset-card" onclick="applyQuickTheme(0, 40, '#000000', 10, 'Midnight Slate', 'Solid structural obsidian glass plate config handles.')">
+                    <div class="preset-preview" style="background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3)); border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <h5>Midnight Slate</h5>
                 </div>
             </div>
-        </aside>
+        </div>
+
+        <!-- WORKSPACE 3: MONITOR METRICS SPEC PANEL -->
+        <div id="view-metrics" class="workspace-panel" style="padding: 40px; display:none; flex-direction: column; gap: 20px;">
+            <h3>System Performance Metrics</h3>
+            <hr style="border-color: var(--border-glow)">
+            <p style="color: var(--text-dim); font-size:14px;">This panel shows optimization variables calculated instantly inside the browser matrix.</p>
+            <div style="background:#090d16; border: 1px solid var(--border-glow); padding:20px; border-radius:12px; font-family:monospace; line-height:2;">
+                <div>[SYS_STATUS] .......... ONLINE</div>
+                <div>[ENGINE_TYPE] ........ VANILLA_JS_V2</div>
+                <div>[RESPONSIVE_MODE] .... CORE_FLUID_CSS</div>
+                <div>[CACHE_LOAD] ......... 0.002ms</div>
+            </div>
+        </div>
 
     </div>
 
     <script>
-        let currentMode = 'css';
+        let outputMode = 'css';
 
-        // Hex parsing to standard RGB output 
-        function hexToRgbMatrix(hex) {
+        // Sidebar Navigation Functional Switching Engine
+        function switchWorkspace(targetView, element) {
+            // Remove active classes everywhere
+            document.querySelectorAll('.workspace-panel').forEach(panel => panel.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            // Activate selected modules
+            const activePanel = document.getElementById('view-' + targetView);
+            if (targetView === 'designer') {
+                activePanel.style.display = 'flex';
+            } else {
+                activePanel.style.display = 'block';
+                if (targetView === 'themes') activePanel.style.display = 'grid';
+            }
+            element.classList.add('active');
+        }
+
+        // Code Box Tab Logic
+        function setSyntaxMode(mode, targetBtn) {
+            outputMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+            runLiveCompiler();
+        }
+
+        // Apply pre-configured themes from the presets workspace tabs
+        function applyQuickTheme(blur, opacity, color, radius, title, bodyText) {
+            document.getElementById('valBlur').value = blur;
+            document.getElementById('valOpacity').value = opacity;
+            document.getElementById('valColor').value = color;
+            document.getElementById('valRadius').value = radius;
+            
+            document.getElementById('glassHeading').innerText = title;
+            document.getElementById('glassParagraph').innerText = bodyText;
+            
+            switchWorkspace('designer', document.querySelectorAll('.nav-item')[0]);
+            runLiveCompiler();
+        }
+
+        // RGBA Helper
+        function parseHexToRgb(hex) {
             let c;
             if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
                 c= hex.substring(1).split('');
@@ -465,66 +602,54 @@
             return '255, 255, 255';
         }
 
-        // Tab Switching Engine
-        function switchTab(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            compileAeroStyles();
-        }
-
-        // Live Compiler Mechanics
-        function compileAeroStyles() {
+        // Live Styling Engine
+        function runLiveCompiler() {
             const blur = document.getElementById('valBlur').value;
             const opacity = document.getElementById('valOpacity').value / 100;
             const radius = document.getElementById('valRadius').value;
             const shadow = document.getElementById('valShadow').value;
-            const hex = document.getElementById('valColor').value;
-            
-            const rgb = hexToRgbMatrix(hex);
+            const hexColor = document.getElementById('valColor').value;
+            const rgbColor = parseHexToRgb(hexColor);
 
-            // Text tag metrics synchronization
-            document.getElementById('txtBlur').innerText = blur + "px";
-            document.getElementById('txtOpacity').innerText = opacity;
-            document.getElementById('txtRadius').innerText = radius + "px";
-            document.getElementById('txtShadow').innerText = shadow + "px";
+            // Update UI metrics value readouts
+            document.getElementById('lblBlur').innerText = blur + "px";
+            document.getElementById('lblOpacity').innerText = opacity;
+            document.getElementById('lblRadius').innerText = radius + "px";
+            document.getElementById('lblShadow').innerText = shadow + "px";
 
-            // Apply direct design rules onto active canvas node
-            const glassNode = document.getElementById('glassNode');
-            glassNode.style.background = `rgba(${rgb}, ${opacity})`;
-            glassNode.style.backdropFilter = `blur(${blur}px)`;
-            glassNode.style.webkitBackdropFilter = `blur(${blur}px)`;
-            glassNode.style.borderRadius = `${radius}px`;
-            glassNode.style.border = `1px solid rgba(${rgb}, ${(opacity + 0.12).toFixed(2)})`;
-            glassNode.style.boxShadow = `0 4px ${shadow}px 0 rgba(0, 0, 0, 0.37)`;
+            // Process mutations directly to glass plate target layer
+            const target = document.getElementById('glassCardTarget');
+            target.style.background = `rgba(${rgbColor}, ${opacity})`;
+            target.style.backdropFilter = `blur(${blur}px)`;
+            target.style.webkitBackdropFilter = `blur(${blur}px)`;
+            target.style.borderRadius = `${radius}px`;
+            target.style.border = `1px solid rgba(${rgbColor}, ${(opacity + 0.15).toFixed(2)})`;
+            target.style.boxShadow = `0 10px ${shadow}px 0 rgba(0, 0, 0, 0.3)`;
 
-            // Render Output Text generation
-            const outputBox = document.getElementById('codeOutput');
-            if (currentMode === 'css') {
-                outputBox.innerText = 
-`background: rgba(${rgb}, ${opacity});\n` +
+            // Compile format code logic syntax trees
+            const codeBox = document.getElementById('codeOutput');
+            if (outputMode === 'css') {
+                codeBox.innerText = 
+`background: rgba(${rgbColor}, ${opacity});\n` +
 `backdrop-filter: blur(${blur}px);\n` +
-`-webkit-backdrop-filter: blur(${blur}px);\n` +
 `border-radius: ${radius}px;\n` +
-`border: 1px solid rgba(${rgb}, ${(opacity + 0.12).toFixed(2)});\n` +
-`box-shadow: 0 4px ${shadow}px 0 rgba(0, 0, 0, 0.37);`;
+`border: 1px solid rgba(${rgbColor}, ${(opacity + 0.15).toFixed(2)});\n` +
+`box-shadow: 0 10px ${shadow}px 0 rgba(0,0,0,0.3);`;
             } else {
-                // Approximate Tailwind configuration conversion
-                outputBox.innerText = `class="bg-white/[${opacity}] backdrop-blur-[${blur}px] rounded-[${radius}px] border border-white/[${(opacity + 0.12).toFixed(2)}] shadow-2xl"`;
+                codeBox.innerText = `class="bg-white/[${opacity}] backdrop-blur-[${blur}px] rounded-[${radius}px] border border-white/[${(opacity + 0.15).toFixed(2)}] shadow-xl"`;
             }
         }
 
-        // Copy mechanism
-        function copyConsoleCode() {
-            const text = document.getElementById('codeOutput').innerText;
-            navigator.clipboard.writeText(text).then(() => {
+        function copyCompiledCode() {
+            const txt = document.getElementById('codeOutput').innerText;
+            navigator.clipboard.writeText(txt).then(() => {
                 const btn = document.querySelector('.copy-btn');
                 btn.innerText = "Copied!";
                 setTimeout(() => { btn.innerText = "Copy Code"; }, 1500);
             });
         }
 
-        window.onload = compileAeroStyles;
+        window.onload = runLiveCompiler;
     </script>
 </body>
 </html>
