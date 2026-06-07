@@ -3,171 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bibo | High-End Web Developer</title>
+    <title>Apex | Premium Agency & Portfolio Template</title>
     <style>
-        /* Base Styling */
+        /* Base & Global Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        :root {
+            --bg-main: #0a0e14;
+            --bg-card: #111622;
+            --border-color: #21283b;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --accent: #ff3385;
+            --accent-glow: rgba(255, 51, 133, 0.15);
+        }
         body {
-            background-color: #0d1117;
-            color: #c9d1d9;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Subtle Background Grid Effect */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-main);
+        }
+        .logo span {
+            color: var(--accent);
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+        .nav-links a:hover {
+            color: var(--accent);
         }
 
         /* Hero Section */
         .hero-section {
-            height: 75vh;
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
-            border-bottom: 1px solid #21262d;
-            background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%);
+            padding: 40px 20px;
+            background: radial-gradient(circle at center, #161c2a 0%, var(--bg-main) 100%);
+            position: relative;
         }
         .hero-section h1 {
-            font-size: 2.8rem;
-            color: #f0f6fc;
-            margin-bottom: 10px;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            max-width: 800px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
         }
         .highlight {
-            color: #ff3385;
-            font-weight: bold;
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
         }
         .hero-section h2 {
-            font-size: 1.3rem;
-            color: #8b949e;
-            font-weight: normal;
-            margin-bottom: 15px;
-        }
-        .hero-section p {
-            font-size: 1.1rem;
-            max-width: 600px;
-            color: #8b949e;
-        }
-
-        /* Services & Standards Section */
-        .portfolio-section {
-            padding: 60px 20px;
-            text-align: center;
-            background-color: #0d1117;
-        }
-        .portfolio-section h3 {
-            font-size: 2rem;
-            color: #f0f6fc;
-            margin-bottom: 30px;
-        }
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 10px;
-        }
-        .project-card {
-            background: #161b22;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #30363d;
-            text-align: left;
-            cursor: default;
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .project-card h4 {
             font-size: 1.4rem;
-            color: #f0f6fc;
-            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-weight: 400;
+            max-width: 600px;
+            margin-bottom: 35px;
         }
-        .project-card p {
-            font-size: 0.95rem;
-            color: #8b949e;
-        }
-        /* Hover effect to show premium quality */
-        .project-card:hover {
-            transform: translateY(-5px);
-            border-color: #ff3385;
-            box-shadow: 0 10px 20px rgba(255, 51, 133, 0.1);
+        .cta-group {
+            display: flex;
+            gap: 15px;
         }
 
-        /* Contact & Trust Section */
-        .contact-section {
-            padding: 60px 20px;
-            background-color: #161b22;
-            text-align: center;
-            border-top: 1px solid #21262d;
-        }
-        .contact-section h3 {
-            font-size: 2rem;
-            color: #f0f6fc;
-            margin-bottom: 15px;
-        }
-        .contact-section p {
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 25px auto;
-            color: #8b949e;
-        }
-        .contact-button {
-            background-color: #ff3385;
-            color: white;
-            padding: 15px 35px;
-            border-radius: 30px;
-            font-weight: bold;
+        /* Button Styling */
+        .btn {
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-weight: 600;
             font-size: 1rem;
             text-decoration: none;
             display: inline-block;
-            transition: background-color 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
         }
-        .contact-button:hover {
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        .btn-primary:hover {
             background-color: #e02471;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 51, 133, 0.3);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
         }
 
-        /* Responsive design for mobile screens */
-        @media (max-width: 600px) {
-            .hero-section h1 { font-size: 2rem; }
+        /* Features/Services Section */
+        .services-section {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-header h3 {
+            font-size: 2.2rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: var(--bg-card);
+            padding: 40px 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            color: var(--accent);
+        }
+        .card h4 {
+            font-size: 1.4rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+        .card p {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 30px var(--accent-glow);
+        }
+
+        /* Trust & Call to Action */
+        .cta-section {
+            padding: 100px 20px;
+            background: linear-gradient(180deg, var(--bg-main) 0%, #111622 100%);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-section h3 {
+            font-size: 2.5rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 35px;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            background-color: #111622;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            nav { padding: 20px; }
+            .hero-section h1 { font-size: 2.4rem; }
             .hero-section h2 { font-size: 1.1rem; }
-            .portfolio-section h3, .contact-section h3 { font-size: 1.6rem; }
+            .cta-group { flex-direction: column; width: 100%; max-width: 300px; }
+            .section-header h3 { font-size: 1.8rem; }
+            .cta-section h3 { font-size: 1.9rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. Hero Section -->
-    <div class="hero-section">
-        <h1>I Build High-End, <span class="highlight">Unstoppable</span> Websites.</h1>
-        <h2>Bibo | Full-Stack Developer | Lebanon</h2>
-        <p>Zero clutter. Just pure code and high performance that scales businesses.</p>
-    </div>
+    <nav>
+        <div class="logo">APEX<span>.</span></div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
 
-    <!-- 2. Services Section (Option A Premium Cards) -->
-    <div class="portfolio-section">
-        <h3>My Coding Standards</h3>
-        <div class="project-grid">
-            <div class="project-card">
-                <h4>⚡ Pure Code Performance</h4>
-                <p>Unlike slow, bulky website builders, I write lightweight, optimized HTML and CSS completely by hand. This ensures your business site loads instantly on all devices, keeping customers engaged.</p>
+    <header class="hero-section">
+        <h1>We Build High-Performance <span class="highlight">Digital Experiences</span></h1>
+        <h2>An ultra-lightweight, conversion-optimized landing page template engineered for modern agencies and SaaS startups.</h2>
+        <div class="cta-group">
+            <a href="#contact" class="btn btn-primary">Get Started</a>
+            <a href="#features" class="btn btn-secondary">Learn More</a>
+        </div>
+    </header>
+
+    <section id="features" class="services-section">
+        <div class="section-header">
+            <h3>Engineered for Speed</h3>
+            <p>Built with absolute precision. Zero bulk, maximum impact.</p>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <span class="card-icon">⚡</span>
+                <h4>Blazing Fast Load Times</h4>
+                <p>Hand-written, fully optimized code ensure minimal file sizes. Say goodbye to slow-loading bloated frameworks and hello to instant paint times.</p>
             </div>
             
-            <div class="project-card">
-                <h4>📱 Fully Responsive Design</h4>
-                <p>Your custom landing page will adjust dynamically and look absolutely flawless whether a customer opens it on a desktop monitor, a laptop, or an iPhone screen.</p>
+            <div class="card">
+                <span class="card-icon">📱</span>
+                <h4>Fluid Responsive Grid</h4>
+                <p>Designed using cutting-edge layout methodologies to ensure flawless presentation across massive 4K displays down to mobile screens.</p>
+            </div>
+
+            <div class="card">
+                <span class="card-icon">🎨</span>
+                <h4>Modern Neo-Dark Aesthetic</h4>
+                <p>A beautiful design language crafted specifically to build premium brand trust, complete with rich interactive micro-interactions.</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- 3. Trust & Call to Action Section -->
-    <div class="contact-section">
-        <h3>Start Your Project Today</h3>
-        <p>We'll map out your custom project, I'll build it to absolute perfection, and you can settle the balance instantly via Whish Money (Card Payment, Link, or Local Cash-In).</p>
-        <a href="https://www.instagram.com/bibosites?igsh=MjFtd3J3cTV6N3hs" target="_blank" class="contact-button">Message Me on Instagram</a>
-    </div>
+    <section id="contact" class="cta-section">
+        <div class="cta-container">
+            <h3>Scale Your Digital Presence Today</h3>
+            <p>Join elite brands utilizing hyper-fast architectures to dominate search rankings and maximize conversion rates.</p>
+            <a href="#" class="btn btn-primary">Launch Your Project</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Apex Template. Designed with absolute perfection.</p>
+    </footer>
 
 </body>
 </html>
