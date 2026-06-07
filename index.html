@@ -3,301 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex | Premium Agency & Portfolio Template</title>
+    <title>Fake Chat Generator</title>
     <style>
-        /* Base & Global Reset */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        :root {
-            --bg-main: #0a0e14;
-            --bg-card: #111622;
-            --border-color: #21283b;
-            --text-main: #f0f6fc;
-            --text-muted: #8b949e;
-            --accent: #ff3385;
-            --accent-glow: rgba(255, 51, 133, 0.15);
-        }
+
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Subtle Background Grid Effect */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
-                              linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Navigation Bar */
-        nav {
+            background-color: #f0f2f5;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--text-main);
-        }
-        .logo span {
-            color: var(--accent);
-        }
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 0.95rem;
-            transition: color 0.2s ease;
-        }
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 40px 20px;
-            background: radial-gradient(circle at center, #161c2a 0%, var(--bg-main) 100%);
-            position: relative;
+            min-height: 100vh;
+            padding: 20px;
         }
-        .hero-section h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--text-main);
-            max-width: 800px;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
-        .highlight {
-            color: var(--accent);
-            position: relative;
-            display: inline-block;
-        }
-        .hero-section h2 {
-            font-size: 1.4rem;
-            color: var(--text-muted);
-            font-weight: 400;
-            max-width: 600px;
-            margin-bottom: 35px;
-        }
-        .cta-group {
+
+        .container {
             display: flex;
-            gap: 15px;
+            background: white;
+            width: 900px;
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
-        /* Button Styling */
-        .btn {
-            padding: 14px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.2s ease;
-        }
-        .btn-primary {
-            background-color: var(--accent);
-            color: white;
-            box-shadow: 0 4px 15px var(--accent-glow);
-        }
-        .btn-primary:hover {
-            background-color: #e02471;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 51, 133, 0.3);
-        }
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-color: var(--text-muted);
-            transform: translateY(-2px);
+        /* Left Control Panel */
+        .control-panel {
+            flex: 1;
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+            background: #fafafa;
         }
 
-        /* Features/Services Section */
-        .services-section {
-            padding: 100px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+        .control-panel h2 {
+            margin-bottom: 20px;
+            color: #333;
         }
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .section-header h3 {
-            font-size: 2.2rem;
-            color: var(--text-main);
+
+        .form-group {
             margin-bottom: 15px;
         }
-        .section-header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 500px;
-            margin: 0 auto;
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
         }
-        .card {
-            background: var(--bg-card);
-            padding: 40px 30px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+        .btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #1ebd58;
+        }
+
+        /* Right Preview Panel */
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #e5ddd5;
+            padding: 30px;
+        }
+
+        /* Mock Phone Frame */
+        .phone-mockup {
+            width: 320px;
+            height: 580px;
+            background: #efe7dd; /* Classic WA background color */
+            border: 12px solid #333;
+            border-radius: 36px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
         }
-        .card-icon {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            display: inline-block;
-            color: var(--accent);
-        }
-        .card h4 {
-            font-size: 1.4rem;
-            color: var(--text-main);
-            margin-bottom: 15px;
-        }
-        .card p {
-            font-size: 1rem;
-            color: var(--text-muted);
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-            box-shadow: 0 15px 30px var(--accent-glow);
+
+        /* WhatsApp Header Style */
+        .chat-header {
+            background: #075E54;
+            color: white;
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* Trust & Call to Action */
-        .cta-section {
-            padding: 100px 20px;
-            background: linear-gradient(180deg, var(--bg-main) 0%, #111622 100%);
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-        }
-        .cta-container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .cta-section h3 {
-            font-size: 2.5rem;
-            color: var(--text-main);
-            margin-bottom: 20px;
-            letter-spacing: -0.5px;
-        }
-        .cta-section p {
-            font-size: 1.1rem;
-            margin-bottom: 35px;
-            color: var(--text-muted);
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #555;
+            font-size: 14px;
         }
 
-        /* Footer */
-        footer {
-            padding: 40px 20px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
-            background-color: #111622;
+        .user-info .name {
+            font-weight: bold;
+            font-size: 15px;
         }
 
-        /* Responsive Breakpoints */
-        @media (max-width: 768px) {
-            nav { padding: 20px; }
-            .hero-section h1 { font-size: 2.4rem; }
-            .hero-section h2 { font-size: 1.1rem; }
-            .cta-group { flex-direction: column; width: 100%; max-width: 300px; }
-            .section-header h3 { font-size: 1.8rem; }
-            .cta-section h3 { font-size: 1.9rem; }
+        .user-info .status {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* Chat Area */
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            position: relative;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        /* Received Message (Left) */
+        .message.received {
+            background: white;
+            align-self: flex-start;
+            border-top-left-radius: 0;
+        }
+
+        /* Sent Message (Right) */
+        .message.sent {
+            background: #DCF8C6;
+            align-self: flex-end;
+            border-top-right-radius: 0;
+        }
+
+        /* Footer input mockup */
+        .chat-footer {
+            background: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">APEX<span>.</span></div>
-        <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#contact">Contact</a>
+<div class="container">
+    <div class="control-panel">
+        <h2>Chat Settings</h2>
+        
+        <div class="form-group">
+            <label for="inputName">Person's Name</label>
+            <input type="text" id="inputName" value="John Doe" oninput="updateHeader()">
         </div>
-    </nav>
 
-    <header class="hero-section">
-        <h1>We Build High-Performance <span class="highlight">Digital Experiences</span></h1>
-        <h2>An ultra-lightweight, conversion-optimized landing page template engineered for modern agencies and SaaS startups.</h2>
-        <div class="cta-group">
-            <a href="#contact" class="btn btn-primary">Get Started</a>
-            <a href="#features" class="btn btn-secondary">Learn More</a>
+        <div class="form-group">
+            <label for="inputStatus">Status (e.g., online, typing...)</label>
+            <input type="text" id="inputStatus" value="online" oninput="updateHeader()">
         </div>
-    </header>
 
-    <section id="features" class="services-section">
-        <div class="section-header">
-            <h3>Engineered for Speed</h3>
-            <p>Built with absolute precision. Zero bulk, maximum impact.</p>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <h3>Add Message</h3>
+        <div class="form-group">
+            <label for="msgSender">Sender</label>
+            <select id="msgSender">
+                <option value="received">Person (Left)</option>
+                <option value="sent">You (Right)</option>
+            </select>
         </div>
-        <div class="grid">
-            <div class="card">
-                <span class="card-icon">⚡</span>
-                <h4>Blazing Fast Load Times</h4>
-                <p>Hand-written, fully optimized code ensure minimal file sizes. Say goodbye to slow-loading bloated frameworks and hello to instant paint times.</p>
-            </div>
+
+        <div class="form-group">
+            <label for="msgText">Message Text</label>
+            <textarea id="msgText" rows="3" placeholder="Type a fake message..."></textarea>
+        </div>
+
+        <button class="btn" onclick="addMessage()">Add Message to Chat</button>
+    </div>
+
+    <div class="preview-panel">
+        <div class="phone-mockup">
             
-            <div class="card">
-                <span class="card-icon">📱</span>
-                <h4>Fluid Responsive Grid</h4>
-                <p>Designed using cutting-edge layout methodologies to ensure flawless presentation across massive 4K displays down to mobile screens.</p>
+            <div class="chat-header">
+                <div class="avatar" id="previewAvatar">J</div>
+                <div class="user-info">
+                    <div class="name" id="previewName">John Doe</div>
+                    <div class="status" id="previewStatus">online</div>
+                </div>
             </div>
 
-            <div class="card">
-                <span class="card-icon">🎨</span>
-                <h4>Modern Neo-Dark Aesthetic</h4>
-                <p>A beautiful design language crafted specifically to build premium brand trust, complete with rich interactive micro-interactions.</p>
+            <div class="chat-body" id="chatBody">
+                <div class="message received">Hey! How does this look?</div>
+                <div class="message sent">Looks just like a real chat!</div>
             </div>
-        </div>
-    </section>
 
-    <section id="contact" class="cta-section">
-        <div class="cta-container">
-            <h3>Scale Your Digital Presence Today</h3>
-            <p>Join elite brands utilizing hyper-fast architectures to dominate search rankings and maximize conversion rates.</p>
-            <a href="#" class="btn btn-primary">Launch Your Project</a>
-        </div>
-    </section>
+            <div class="chat-footer">
+                Type a message...
+            </div>
 
-    <footer>
-        <p>&copy; 2026 Apex Template. Designed with absolute perfection.</p>
-    </footer>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Live update Header Details
+    function updateHeader() {
+        const name = document.getElementById('inputName').value;
+        const status = document.getElementById('inputStatus').value;
+        
+        document.getElementById('previewName').innerText = name ? name : "Name";
+        document.getElementById('previewStatus').innerText = status;
+        
+        // Update avatar first letter
+        document.getElementById('previewAvatar').innerText = name ? name.charAt(0).toUpperCase() : "?";
+    }
+
+    // Add a new message dynamically
+    function addMessage() {
+        const sender = document.getElementById('msgSender').value;
+        const text = document.getElementById('msgText').value.trim();
+        const chatBody = document.getElementById('chatBody');
+
+        if (text === "") {
+            alert("Please enter some text first!");
+            return;
+        }
+
+        // Create new message div
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender);
+        messageDiv.innerText = text;
+
+        // Append to chat body
+        chatBody.appendChild(messageDiv);
+
+        // Scroll to the bottom of the chat
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Clear textarea
+        document.getElementById('msgText').value = "";
+    }
+</script>
 
 </body>
 </html>
