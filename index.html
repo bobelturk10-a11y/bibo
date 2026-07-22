@@ -1,617 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeroGlass Studio Pro - Premium UI Engine</title>
-    <style>
-        :root {
-            --bg-darker: #020617;
-            --bg-dark: #0f172a;
-            --panel-bg: #1e293b;
-            --accent-cyan: #06b6d4;
-            --accent-indigo: #6366f1;
-            --text-white: #f8fafc;
-            --text-dim: #64748b;
-            --border-glow: #334155;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-darker);
-            color: var(--text-white);
-            height: 100vh;
-            display: flex;
-            flex-direction: row;
-            overflow: hidden;
-        }
-
-        /* 1. LEFT SIDEBAR NAVIGATION (Responsive to Bottom Bar on Mobile) */
-        .sidebar-nav {
-            width: 80px;
-            background: #030712;
-            border-right: 1px solid var(--border-glow);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 24px 0;
-            gap: 32px;
-            z-index: 100;
-            flex-shrink: 0;
-        }
-
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 18px;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
-        }
-
-        .nav-items-container {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            width: 100%;
-            align-items: center;
-        }
-
-        .nav-item {
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-            gap: 4px;
-        }
-
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        .nav-item span {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-item.active, .nav-item:hover {
-            color: var(--accent-cyan);
-            background: rgba(6, 182, 212, 0.08);
-            border-color: rgba(6, 182, 212, 0.2);
-        }
-
-        /* 2. MAIN APP STRUCTURAL WORKSPACE */
-        .app-layout {
-            display: flex;
-            flex: 1;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Viewport switching containers */
-        .workspace-panel {
-            display: none;
-            width: 100%;
-            height: 100%;
-        }
-
-        .workspace-panel.active {
-            display: flex;
-        }
-
-        /* MIDDLE PREVIEW CANVAS COLUMN */
-        .canvas-area {
-            flex: 1;
-            background: radial-gradient(circle at 50% 50%, var(--bg-dark), var(--bg-darker));
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-        }
-
-        .canvas-topbar {
-            padding: 20px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            z-index: 10;
-        }
-
-        .canvas-topbar h2 {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #94a3b8;
-        }
-
-        .preview-viewport {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            padding: 20px;
-            background: #090d16; /* Clean canvas dark backdrop to make blur pop */
-        }
-
-        /* Mesh Background Blur Objects - Critical for showing the blur effect working */
-        .mesh-orb {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            filter: blur(50px);
-            animation: orbFloat 12s infinite alternate ease-in-out;
-            opacity: 0.7;
-            pointer-events: none;
-        }
-        .orb-magenta { width: 280px; height: 280px; background: linear-gradient(to right, #ec4899, #8b5cf6); top: 20%; left: 15%; }
-        .orb-cyan { width: 320px; height: 320px; background: linear-gradient(to right, #06b6d4, #3b82f6); bottom: 20%; right: 15%; animation-delay: -4s; }
-
-        @keyframes orbFloat {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 40px) scale(1.1); }
-        }
-
-        /* The Live Glass Plate Element (Perfected for hardware-accelerated blur execution) */
-        .glass-element {
-            width: 100%;
-            max-width: 460px;
-            min-height: 250px;
-            padding: 36px;
-            z-index: 5;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            transform: translateZ(0); /* Triggers GPU hardware acceleration for smoother mobile rendering */
-        }
-
-        .glass-element h3 {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
-        }
-
-        .glass-element p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.85);
-            line-height: 1.6;
-        }
-
-        /* RIGHT PARAMETER SLIDERS COLUMN */
-        .inspector-panel {
-            width: 380px;
-            background: #040711;
-            border-left: 1px solid var(--border-glow);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            flex-shrink: 0;
-        }
-
-        .inspector-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-glow);
-        }
-
-        .inspector-header h1 {
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        .inspector-scroll {
-            padding: 24px;
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .inspector-section h4 {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            margin-bottom: 14px;
-        }
-
-        /* Sliders Layout UI */
-        .slider-wrapper { margin-bottom: 16px; }
-        .slider-meta { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
-        .slider-meta span:last-child { color: var(--accent-cyan); font-family: monospace; font-weight: bold; }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #1e293b;
-            border-radius: 4px;
-            outline: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 8px var(--accent-cyan);
-        }
-
-        .color-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #111827;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid var(--border-glow);
-        }
-        input[type="color"] { -webkit-appearance: none; border: none; width: 32px; height: 32px; cursor: pointer; background: transparent; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
-
-        /* THEME PRESET GRID SYSTEM */
-        .preset-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            padding: 24px;
-            overflow-y: auto;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .preset-card {
-            background: #090d16;
-            border: 1px solid var(--border-glow);
-            border-radius: 14px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .preset-card:hover {
-            border-color: var(--accent-cyan);
-            transform: translateY(-2px);
-        }
-        .preset-preview {
-            height: 80px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        /* OUTPUT TERMINAL CONTAINER */
-        .terminal-container {
-            border-top: 1px solid var(--border-glow);
-            background: #020617;
-            padding: 20px;
-        }
-
-        .tab-bar {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
-            background: #0f172a;
-            padding: 4px;
-            border-radius: 8px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            padding: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .tab-btn.active { background: var(--panel-bg); color: var(--text-white); }
-
-        .terminal-window {
-            background: #090d16;
-            border: 1px solid var(--border-glow);
-            border-radius: 10px;
-            padding: 14px;
-            position: relative;
-        }
-
-        .terminal-window pre {
-            font-family: monospace;
-            font-size: 11px;
-            color: #cbd5e1;
-            overflow-x: auto;
-            max-height: 120px;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-glow);
-            color: var(--accent-cyan);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            cursor: pointer;
-        }
-
-        /* Responsive Layout Breaking Breakpoints */
-        @media (max-width: 1024px) {
-            .workspace-panel.active { flex-direction: column; }
-            .canvas-area { height: 55%; }
-            .inspector-panel { width: 100%; height: 45%; border-left: none; border-top: 1px solid var(--border-glow); }
-        }
-
-        @media (max-width: 640px) {
-            body { flex-direction: column-reverse; }
-            .sidebar-nav { width: 100%; height: 64px; flex-direction: row; justify-content: space-around; padding: 0; border-right: none; border-top: 1px solid var(--border-glow); }
-            .logo-icon { display: none; }
-            .nav-items-container { flex-direction: row; justify-content: space-around; height: 100%; }
-            .nav-item { width: 33%; height: 100%; border-radius: 0; }
-            .canvas-area { height: 50%; }
-            .inspector-panel { height: 50%; }
-            .preset-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontend Developer Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <!-- 1. LEFT UTILITY SYSTEM RAIL -->
-    <nav class="sidebar-nav">
-        <div class="logo-icon">A</div>
-        <div class="nav-items-container">
-            <div class="nav-item active" onclick="switchWorkspace('designer', this)">
-                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-                <span>Studio</span>
-            </div>
-            <div class="nav-item" onclick="switchWorkspace('themes', this)">
-                <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-                <span>Themes</span>
-            </div>
-            <div class="nav-item" onclick="switchWorkspace('metrics', this)">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H5v-2h4V7h2v4h4v2z"/></svg>
-                <span>Specs</span>
-            </div>
+  <!-- HEADER / HERO -->
+  <header>
+    <div class="container">
+      <h1>Hi, I'm <span class="highlight">Your Name</span> 👋</h1>
+      <p class="subtitle">Frontend Web Developer & UI Designer</p>
+      <p class="bio">
+        I build fast, mobile-friendly landing pages and modern web applications for businesses and creators.
+      </p>
+      <div class="hero-buttons">
+        <a href="#projects" class="btn primary">View My Work</a>
+        <a href="#contact" class="btn secondary">Hire Me</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SKILLS SECTION -->
+  <section class="skills container">
+    <h2>Skills & Tech</h2>
+    <div class="skills-grid">
+      <span class="skill-tag">HTML5 / CSS3</span>
+      <span class="skill-tag">JavaScript (JS)</span>
+      <span class="skill-tag">Responsive Web Design</span>
+      <span class="skill-tag">Tailwind / Bootstrap</span>
+      <span class="skill-tag">Git / GitHub</span>
+    </div>
+  </section>
+
+  <!-- PROJECTS SECTION -->
+  <section id="projects" class="projects container">
+    <h2>Featured Projects</h2>
+    <div class="projects-grid">
+
+      <!-- Project 1 -->
+      <div class="project-card">
+        <h3>Coffee Shop Landing Page</h3>
+        <p>A fast, modern mobile menu & ordering page designed for local cafes.</p>
+        <div class="card-links">
+          <a href="https://your-demo-link.vercel.app" target="_blank" class="demo-link">Live Demo ↗</a>
         </div>
-    </nav>
+      </div>
 
-    <!-- 2. STRUCTURAL WORKSPACE VIEW PORTS -->
-    <div class="app-layout">
-        
-        <!-- WORKSPACE 1: THE CORE DESIGN STUDIO -->
-        <div id="view-designer" class="workspace-panel active">
-            <main class="canvas-area">
-                <div class="canvas-topbar">
-                    <h2>WORKSPACE // PREVIEW_RENDERER</h2>
-                    <div style="font-size: 11px; color: var(--accent-cyan); font-family: monospace;">● LIVE HARDWARE ENGINE</div>
-                </div>
-                <div class="preview-viewport">
-                    <!-- Moving Backdrop Orbs to visualize the blur intensity working -->
-                    <div class="mesh-orb orb-magenta"></div>
-                    <div class="mesh-orb orb-cyan"></div>
-                    
-                    <div class="glass-element" id="glassCardTarget">
-                        <h3 id="glassHeading">AeroGlass Core</h3>
-                        <p id="glassParagraph">Adjust the parameter sliders inside the sidebar inspector panel grid. Dynamic backend modifiers will compile styling updates seamlessly.</p>
-                    </div>
-                </div>
-            </main>
-
-            <aside class="inspector-panel">
-                <div class="inspector-header"><h1>Studio Parameters</h1></div>
-                <div class="inspector-scroll">
-                    <div class="inspector-section">
-                        <h4>Glass Modifiers</h4>
-                        <div class="slider-wrapper">
-                            <div class="slider-meta"><label>Backdrop Blur</label><span id="lblBlur">20px</span></div>
-                            <input type="range" id="valBlur" min="0" max="40" value="20" oninput="runLiveCompiler()">
-                        </div>
-                        <div class="slider-wrapper">
-                            <div class="slider-meta"><label>Glass Opacity</label><span id="lblOpacity">0.15</span></div>
-                            <input type="range" id="valOpacity" min="0" max="100" value="15" oninput="runLiveCompiler()">
-                        </div>
-                        <div class="slider-wrapper">
-                            <div class="slider-meta"><label>Corner Radius</label><span id="lblRadius">24px</span></div>
-                            <input type="range" id="valRadius" min="0" max="60" value="24" oninput="runLiveCompiler()">
-                        </div>
-                    </div>
-                    <div class="inspector-section">
-                        <h4>Shadow Profile</h4>
-                        <div class="slider-wrapper">
-                            <div class="slider-meta"><label>Glow Spread</label><span id="lblShadow">30px</span></div>
-                            <input type="range" id="valShadow" min="0" max="100" value="30" oninput="runLiveCompiler()">
-                        </div>
-                        <div class="slider-wrapper">
-                            <div class="slider-meta"><label>Base Tint Color</label></div>
-                            <div class="color-row">
-                                <input type="color" id="valColor" value="#ffffff" oninput="runLiveCompiler()">
-                                <span style="font-size: 12px; color: var(--text-dim)">Adjust base highlights alpha</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="terminal-container">
-                    <div class="tab-bar">
-                        <button class="tab-btn active" onclick="setSyntaxMode('css', this)">CSS Styles</button>
-                        <button class="tab-btn" onclick="setSyntaxMode('tailwind', this)">Tailwind</button>
-                    </div>
-                    <div class="terminal-window">
-                        <button class="copy-btn" onclick="copyCompiledCode()">Copy Code</button>
-                        <pre><code id="codeOutput">Processing...</code></pre>
-                    </div>
-                </div>
-            </aside>
+      <!-- Project 2 -->
+      <div class="project-card">
+        <h3>Fitness Studio Web Layout</h3>
+        <p>Responsive multi-section layout with schedule grid and dark mode styling.</p>
+        <div class="card-links">
+          <a href="https://your-demo-link.vercel.app" target="_blank" class="demo-link">Live Demo ↗</a>
         </div>
-
-        <!-- WORKSPACE 2: THE THEME ENGINE SYSTEM -->
-        <div id="view-themes" class="workspace-panel">
-            <div class="preset-grid">
-                <div class="preset-card" onclick="applyQuickTheme(30, 10, '#ffffff', 24, 'Ice Platinum', 'Perfect crystal frost highlight layout settings.')">
-                    <div class="preset-preview" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;"></div>
-                    <h5>Ice Platinum</h5>
-                </div>
-                <div class="preset-card" onclick="applyQuickTheme(12, 20, '#06b6d4', 16, 'Neon Cyber', 'Deep futuristic electric glowing backdrop parameters.')">
-                    <div class="preset-preview" style="background: rgba(6, 182, 212, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(6,182,212,0.3); border-radius: 8px;"></div>
-                    <h5>Neon Cyber</h5>
-                </div>
-                <div class="preset-card" onclick="applyQuickTheme(25, 15, '#818cf8', 32, 'Amethyst Dusk', 'Rich deep luxurious purplish frosted styling.')">
-                    <div class="preset-preview" style="background: rgba(129, 140, 248, 0.15); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(129,140,248,0.2); border-radius: 8px;"></div>
-                    <h5>Amethyst Dusk</h5>
-                </div>
-                <div class="preset-card" onclick="applyQuickTheme(0, 50, '#020617', 12, 'Midnight Obsidian', 'Solid structural deep obsidian card configurations.')">
-                    <div class="preset-preview" style="background: rgba(2, 6, 23, 0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;"></div>
-                    <h5>Midnight Obsidian</h5>
-                </div>
-            </div>
-        </div>
-
-        <!-- WORKSPACE 3: MONITOR METRICS SPEC PANEL -->
-        <div id="view-metrics" class="workspace-panel" style="padding: 40px; display:none; flex-direction: column; gap: 20px;">
-            <h3>System Performance Metrics</h3>
-            <hr style="border-color: var(--border-glow)">
-            <div style="background:#090d16; border: 1px solid var(--border-glow); padding:24px; border-radius:12px; font-family:monospace; line-height:2.2;">
-                <div>[SYS_STATUS] .......... ONLINE</div>
-                <div>[ENGINE_TYPE] ........ VANILLA_JS_V3</div>
-                <div>[BACKDROP_FILTER] .... WEBKIT_ACCELERATED</div>
-                <div>[RESPONSIVE_STATE] ... FULL_FLUID_READY</div>
-            </div>
-        </div>
+      </div>
 
     </div>
+  </section>
 
-    <script>
-        let outputMode = 'css';
+  <!-- CONTACT SECTION -->
+  <section id="contact" class="contact container">
+    <h2>Let's Work Together</h2>
+    <p>Need a custom website or mobile landing page? Send me a message!</p>
+    <div class="contact-links">
+      <a href="mailto:your-email@gmail.com" class="contact-btn">Email Me</a>
+      <a href="https://instagram.com/yourusername" target="_blank" class="contact-btn">Instagram DM</a>
+    </div>
+  </section>
 
-        // Sidebar Navigation Functional Workspace Switching Engine
-        function switchWorkspace(targetView, element) {
-            document.querySelectorAll('.workspace-panel').forEach(panel => panel.style.display = 'none');
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            
-            const activePanel = document.getElementById('view-' + targetView);
-            if (targetView === 'designer') {
-                activePanel.style.display = 'flex';
-            } else if (targetView === 'themes') {
-                activePanel.style.display = 'grid';
-            } else {
-                activePanel.style.display = 'flex';
-            }
-            element.classList.add('active');
-        }
+  <footer>
+    <p>© 2026 Your Name. Built with HTML & CSS.</p>
+  </footer>
 
-        // Code Output Syntax Switching Tabs
-        function setSyntaxMode(mode, targetBtn) {
-            outputMode = mode;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            targetBtn.classList.add('active');
-            runLiveCompiler();
-        }
-
-        // Apply pre-configured themes from the presets panel
-        function applyQuickTheme(blur, opacity, color, radius, title, bodyText) {
-            document.getElementById('valBlur').value = blur;
-            document.getElementById('valOpacity').value = opacity;
-            document.getElementById('valColor').value = color;
-            document.getElementById('valRadius').value = radius;
-            
-            document.getElementById('glassHeading').innerText = title;
-            document.getElementById('glassParagraph').innerText = bodyText;
-            
-            switchWorkspace('designer', document.querySelectorAll('.nav-item')[0]);
-            runLiveCompiler();
-        }
-
-        // Helper calculation tool converting hex matrix colors to raw RGB components
-        function parseHexToRgb(hex) {
-            let c;
-            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-                c= hex.substring(1).split('');
-                if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
-                c= '0x' + c.join('');
-                return [(c>>16)&255, (c>>8)&255, c&255].join(', ');
-            }
-            return '255, 255, 255';
-        }
-
-        // Core Live Compiler Engine (Guarantees hardware-accelerated cross-device blur compilation)
-        function runLiveCompiler() {
-            const blur = document.getElementById('valBlur').value;
-            const opacity = document.getElementById('valOpacity').value / 100;
-            const radius = document.getElementById('valRadius').value;
-            const shadow = document.getElementById('valShadow').value;
-            const hexColor = document.getElementById('valColor').value;
-            const rgbColor = parseHexToRgb(hexColor);
-
-            // Update user readable readout indicators
-            document.getElementById('lblBlur').innerText = blur + "px";
-            document.getElementById('lblOpacity').innerText = opacity;
-            document.getElementById('lblRadius').innerText = radius + "px";
-            document.getElementById('lblShadow').innerText = shadow + "px";
-
-            // TARGET EXECUTION: Mutate styling arrays directly to glass target container element 
-            const target = document.getElementById('glassCardTarget');
-            target.style.background = `rgba(${rgbColor}, ${opacity})`;
-            
-            // Critical combination guaranteeing blur works across Safari, iOS Chrome, Android, and Desktop layout arrays
-            target.style.backdropFilter = `blur(${blur}px)`;
-            target.style.webkitBackdropFilter = `blur(${blur}px)`;
-            
-            target.style.borderRadius = `${radius}px`;
-            target.style.border = `1px solid rgba(${rgbColor}, ${(opacity + 0.15).toFixed(2)})`;
-            target.style.boxShadow = `0 20px ${shadow}px 0 rgba(0, 0, 0, 0.35)`;
-
-            // Render out text configuration formatting engines
-            const codeBox = document.getElementById('codeOutput');
-            if (outputMode === 'css') {
-                codeBox.innerText = 
-`background: rgba(${rgbColor}, ${opacity});\n` +
-`backdrop-filter: blur(${blur}px);\n` +
-`-webkit-backdrop-filter: blur(${blur}px);\n` +
-`border-radius: ${radius}px;\n` +
-`border: 1px solid rgba(${rgbColor}, ${(opacity + 0.15).toFixed(2)});\n` +
-`box-shadow: 0 20px ${shadow}px 0 rgba(0, 0, 0, 0.35);`;
-            } else {
-                codeBox.innerText = `class="bg-white/[${opacity}] backdrop-blur-[${blur}px] rounded-[${radius}px] border border-white/[${(opacity + 0.15).toFixed(2)}] shadow-2xl"`;
-            }
-        }
-
-        function copyCompiledCode() {
-            const txt = document.getElementById('codeOutput').innerText;
-            navigator.clipboard.writeText(txt).then(() => {
-                const btn = document.querySelector('.copy-btn');
-                btn.innerText = "Copied!";
-                setTimeout(() => { btn.innerText = "Copy Code"; }, 1500);
-            });
-        }
-
-        window.onload = runLiveCompiler;
-    </script>
 </body>
 </html>
-
