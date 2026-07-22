@@ -3,58 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BIBO | Frontend Web Developer</title>
+  <title>BIBO | High Conversion Frontend Developer</title>
+  
+  <!-- Modern Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <!-- AOS Animation Library CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <!-- BACKGROUND GLOW EFFECTS -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
   <!-- HERO SECTION -->
   <header>
-    <div class="container">
-      <h1>Hi, I'm <span class="highlight">BIBO</span> 👋</h1>
-      <p class="subtitle">Frontend Web Developer</p>
+    <div class="container hero-container" data-aos="fade-up" data-aos-duration="1000">
+      <div class="badge">AVAILABLE FOR FREELANCE</div>
+      <h1>High Design.<br>High Conversions.<br>I'm <span class="highlight">BIBO</span>.</h1>
+      <p class="subtitle">Frontend Developer & Digital Experience Designer</p>
       <p class="bio">
-        I build fast, responsive, modern landing pages and custom websites for clients and digital businesses.
+        I create immersive, fast, and high-converting web experiences that turn casual viewers into loyal customers.
       </p>
       <div class="hero-buttons">
-        <a href="#projects" class="btn primary">View My Work</a>
-        <a href="#contact" class="btn secondary">Hire Me</a>
+        <a href="#projects" class="btn primary">Explore Work ⚡</a>
+        <a href="#contact" class="btn secondary">Get In Touch</a>
       </div>
     </div>
   </header>
 
   <!-- SKILLS SECTION -->
   <section class="skills container">
-    <h2>Tech & Skills</h2>
-    <div class="skills-grid">
-      <span class="skill-tag">HTML5 / CSS3</span>
-      <span class="skill-tag">JavaScript (JS)</span>
-      <span class="skill-tag">Responsive Web Design</span>
-      <span class="skill-tag">Git / GitHub</span>
-      <span class="skill-tag">Vercel Deployment</span>
+    <h2 data-aos="fade-right">Core Capabilities</h2>
+    <div class="skills-grid" data-aos="fade-up" data-aos-delay="200">
+      <span class="skill-tag">HTML5 / Modern CSS</span>
+      <span class="skill-tag">JavaScript / ES6+</span>
+      <span class="skill-tag">UI/UX Animation</span>
+      <span class="skill-tag">Responsive Design</span>
+      <span class="skill-tag">Vercel & GitHub</span>
     </div>
   </section>
 
   <!-- PROJECTS SECTION -->
   <section id="projects" class="projects container">
-    <h2>Featured Projects</h2>
+    <h2 data-aos="fade-right">Selected Projects</h2>
     <div class="projects-grid">
 
       <!-- Project 1 -->
-      <div class="project-card">
-        <h3>Cafe & Restaurant Landing Page</h3>
-        <p>A fast, modern mobile menu layout designed for modern local businesses.</p>
-        <div class="card-links">
-          <a href="https://your-demo.vercel.app" target="_blank" class="demo-link">Live Demo ↗</a>
+      <div class="project-card" data-aos="zoom-in-up" data-aos-delay="100">
+        <div class="card-image-placeholder">
+          <div class="card-badge">Web Experience</div>
+        </div>
+        <div class="card-content">
+          <h3>Interactive Cafe Menu</h3>
+          <p>Sleek, motion-heavy mobile ordering menu for high-end coffee shops.</p>
+          <a href="https://your-demo.vercel.app" target="_blank" class="demo-link">Launch Live Demo ↗</a>
         </div>
       </div>
 
       <!-- Project 2 -->
-      <div class="project-card">
-        <h3>Creative Agency Portfolio</h3>
-        <p>A sleek dark-mode website showcasing services, UI layouts, and fast loading.</p>
-        <div class="card-links">
-          <a href="https://your-demo.vercel.app" target="_blank" class="demo-link">Live Demo ↗</a>
+      <div class="project-card" data-aos="zoom-in-up" data-aos-delay="300">
+        <div class="card-image-placeholder alt-bg">
+          <div class="card-badge">UI / UX</div>
+        </div>
+        <div class="card-content">
+          <h3>Creative Agency Concept</h3>
+          <p>Dark mode, high-converting digital storefront built for online brands.</p>
+          <a href="https://your-demo.vercel.app" target="_blank" class="demo-link">Launch Live Demo ↗</a>
         </div>
       </div>
 
@@ -62,18 +80,30 @@
   </section>
 
   <!-- CONTACT SECTION -->
-  <section id="contact" class="contact container">
-    <h2>Let's Work Together</h2>
-    <p>Have a website project or need a custom landing page? Reach out to me!</p>
-    <div class="contact-links">
-      <a href="mailto:your-email@gmail.com" class="contact-btn">Email Me</a>
-      <a href="https://instagram.com/yourusername" target="_blank" class="contact-btn">Instagram DM</a>
+  <section id="contact" class="contact container" data-aos="fade-up">
+    <div class="contact-box">
+      <h2>Let's Build Something Cool</h2>
+      <p>Ready to upgrade your website into a high-converting digital platform?</p>
+      <div class="contact-links">
+        <a href="mailto:your-email@gmail.com" class="btn primary">Email Me</a>
+        <a href="https://instagram.com/yourusername" target="_blank" class="btn secondary">Instagram DM</a>
+      </div>
     </div>
   </section>
 
   <footer>
-    <p>© 2026 BIBO. Built with HTML & CSS.</p>
+    <p>© 2026 BIBO. Designed for Impact.</p>
   </footer>
 
+  <!-- AOS Animation Library JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    // Initialize the Scroll Animations
+    AOS.init({
+      once: false,
+      mirror: true,
+      duration: 800
+    });
+  </script>
 </body>
 </html>
