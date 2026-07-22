@@ -52,19 +52,19 @@
     <h2 data-aos="fade-right">Selected Projects</h2>
     <div class="projects-grid">
 
-      <!-- Project 1 -->
+      <!-- Project 1: Cafe Menu -->
       <div class="project-card" data-aos="zoom-in-up" data-aos-delay="100">
         <div class="card-image-placeholder">
           <div class="card-badge">Web Experience</div>
         </div>
         <div class="card-content">
           <h3>Interactive Cafe Menu</h3>
-          <p>Sleek, motion-heavy mobile ordering menu for high-end coffee shops.</p>
-          <a href="https://your-demo.vercel.app" target="_blank" class="demo-link">Launch Live Demo ↗</a>
+          <p>Sleek, motion-heavy mobile ordering menu with live category switching.</p>
+          <button onclick="openModal('modal-cafe')" class="btn-demo-trigger">Launch Live Demo ↗</button>
         </div>
       </div>
 
-      <!-- Project 2 -->
+      <!-- Project 2: Creative Agency -->
       <div class="project-card" data-aos="zoom-in-up" data-aos-delay="300">
         <div class="card-image-placeholder alt-bg">
           <div class="card-badge">UI / UX</div>
@@ -72,7 +72,7 @@
         <div class="card-content">
           <h3>Creative Agency Concept</h3>
           <p>Dark mode, high-converting digital storefront built for online brands.</p>
-          <a href="https://your-demo.vercel.app" target="_blank" class="demo-link">Launch Live Demo ↗</a>
+          <button onclick="openModal('modal-agency')" class="btn-demo-trigger">Launch Live Demo ↗</button>
         </div>
       </div>
 
@@ -85,8 +85,7 @@
       <h2>Let's Build Something Cool</h2>
       <p>Ready to upgrade your website into a high-converting digital platform?</p>
       <div class="contact-links">
-        <a href="mailto:your-email@gmail.com" class="btn primary">Email Me</a>
-        <a href="https://instagram.com/yourusername" target="_blank" class="btn secondary">Instagram DM</a>
+        <a href="mailto:baboumimo6@gmail.com" class="btn primary">Email Me</a>
       </div>
     </div>
   </section>
@@ -95,15 +94,88 @@
     <p>© 2026 BIBO. Designed for Impact.</p>
   </footer>
 
+  <!-- ==================== REAL INTERACTIVE DEMO MODALS ==================== -->
+
+  <!-- Modal 1: Cafe Menu Demo -->
+  <div id="modal-cafe" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-cafe')">&times;</span>
+      <div class="demo-cafe">
+        <div class="demo-header">
+          <h3>☕ L'Artisan Coffee</h3>
+          <p>Tap a category to explore our fresh menu</p>
+        </div>
+        <div class="demo-tabs">
+          <button class="tab-btn active" onclick="switchMenu('drinks')">Espresso & Drinks</button>
+          <button class="tab-btn" onclick="switchMenu('sweets')">Desserts & Bakery</button>
+        </div>
+        <div id="menu-drinks" class="menu-list active-list">
+          <div class="menu-item"><span>Iced Spanish Latte</span><strong>$4.50</strong></div>
+          <div class="menu-item"><span>Caramel Macchiato</span><strong>$4.00</strong></div>
+          <div class="menu-item"><span>Matcha Cloud Cold Foam</span><strong>$5.00</strong></div>
+        </div>
+        <div id="menu-sweets" class="menu-list">
+          <div class="menu-item"><span>Pistachio Croissant</span><strong>$3.50</strong></div>
+          <div class="menu-item"><span>Dark Chocolate Tart</span><strong>$4.00</strong></div>
+          <div class="menu-item"><span>San Sebastian Cheesecake</span><strong>$5.00</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Creative Agency Demo -->
+  <div id="modal-agency" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-agency')">&times;</span>
+      <div class="demo-agency">
+        <div class="agency-hero">
+          <div class="agency-badge">AGENCY PREVIEW</div>
+          <h2>We Craft Digital Royalty.</h2>
+          <p>Modern web development engineered for massive conversion rates.</p>
+          <button class="btn primary" onclick="alert('Thanks for testing BIBO\'s agency demo!')">Start A Project</button>
+        </div>
+        <div class="agency-stats">
+          <div class="stat-card"><strong>+140%</strong><span>Conversion Rate</span></div>
+          <div class="stat-card"><strong>0.4s</strong><span>Load Speed</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- AOS Animation Library JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-    // Initialize the Scroll Animations
-    AOS.init({
-      once: false,
-      mirror: true,
-      duration: 800
-    });
+    // Initialize Scroll Animations
+    AOS.init({ once: false, mirror: true, duration: 800 });
+
+    // Modal Control Functions
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = "flex";
+    }
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+    }
+
+    // Cafe Menu Switching Script
+    function switchMenu(category) {
+      document.querySelectorAll('.menu-list').forEach(el => el.classList.remove('active-list'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      if (category === 'drinks') {
+        document.getElementById('menu-drinks').classList.add('active-list');
+        event.target.classList.add('active');
+      } else {
+        document.getElementById('menu-sweets').classList.add('active-list');
+        event.target.classList.add('active');
+      }
+    }
+
+    // Close Modal on Background Click
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+      }
+    }
   </script>
 </body>
 </html>
